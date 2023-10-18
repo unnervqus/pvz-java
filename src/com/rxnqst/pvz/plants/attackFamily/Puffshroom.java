@@ -4,8 +4,10 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class Puffshroom extends Plant {
-    public static final int RELOAD_TIME = 400;
+    public static final int RELOAD_TIME = 400 * SEED_RELOAD_MODIFIER;
     public static final int COST = 0;
     public static int RELOAD = RELOAD_TIME;
     public Puffshroom(int posX, int posY) {

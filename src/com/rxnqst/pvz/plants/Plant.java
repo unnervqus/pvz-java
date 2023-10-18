@@ -17,6 +17,7 @@ public abstract class Plant implements Serializable {
     public Pea ammo;
     public int reloadCooldown = 0;
     public int level;
+    public int frameIndex = 0;
     public Plant(int hp, int tileX, int tileY, SeedSlot texture_name, boolean canShoot) {
         this.hp = hp;
         this.level = 1;

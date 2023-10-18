@@ -21,9 +21,9 @@ public class PeaCreator {
     private static void triplePeashooter(TriplePeashooter plant, Zombie zombie) {
         {
             if (zombie.line - 1 == plant.line || zombie.line + 1 == plant.line || zombie.line == plant.line) {
-                plant.upLinePea = new Pea(plant.hitbox.x, plant.hitbox.y - 150, plant.level);
-                plant.downLinePea = new Pea(plant.hitbox.x, plant.hitbox.y + 150, plant.level);
-                plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level );
+                plant.upLinePea = new Pea(plant.hitbox.x, plant.hitbox.y - 150, plant.level, null);
+                plant.downLinePea = new Pea(plant.hitbox.x, plant.hitbox.y + 150, plant.level, null);
+                plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level, null);
                 plant.reloadCooldown = PEA_RELOAD_TIME;
                 peaList.add(plant.ammo);
                 peaList.add(plant.upLinePea);
@@ -39,7 +39,7 @@ public class PeaCreator {
 
     private static void cactus(Cactus plant, Zombie zombie) {
         if (zombie.line == plant.line) {
-            plant.ammo = new SpikePea(plant.hitbox.x, plant.hitbox.y, plant.level);
+            plant.ammo = new Needle(plant.hitbox.x, plant.hitbox.y, plant.level);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
             if(isServer && isMultiplayerOn) serverPeaQueue.add(plant.ammo);
@@ -48,7 +48,7 @@ public class PeaCreator {
 
     private static void peashooter(Peashooter plant, Zombie zombie) {
         if (zombie.line == plant.line) {
-            plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level);
+            plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level, null);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
             if(isServer && isMultiplayerOn) serverPeaQueue.add(plant.ammo);

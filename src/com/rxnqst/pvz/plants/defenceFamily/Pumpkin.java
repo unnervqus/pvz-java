@@ -4,8 +4,10 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class Pumpkin extends Plant {
-    public static final int RELOAD_TIME = 700;
+    public static final int RELOAD_TIME = 700 * SEED_RELOAD_MODIFIER;
     public static final int COST = 250;
     public static int RELOAD = RELOAD_TIME;
     public Pumpkin(int tileX, int tileY) {

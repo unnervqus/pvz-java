@@ -4,7 +4,7 @@ import com.rxnqst.pvz.ChosenSeed;
 import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.Sun;
 import com.rxnqst.pvz.gui.GameFrame;
-import com.rxnqst.pvz.peas.Pea;
+import com.rxnqst.pvz.peas.*;
 import com.rxnqst.pvz.plants.*;
 import com.rxnqst.pvz.plants.attackFamily.*;
 import com.rxnqst.pvz.plants.boomFamily.CherryBomb;
@@ -19,7 +19,10 @@ import com.rxnqst.pvz.plants.helpFamily.SpikeWeed;
 import com.rxnqst.pvz.plants.helpFamily.Sunflower;
 import com.rxnqst.pvz.plants.helpFamily.TorchWood;
 import com.rxnqst.pvz.utils.Rect;
+import com.rxnqst.pvz.zombies.BasicZombie;
 import com.rxnqst.pvz.zombies.Zombie;
+import com.rxnqst.pvz.zombies.ZombieBuckethead;
+import com.rxnqst.pvz.zombies.ZombieConehead;
 
 import static com.rxnqst.pvz.GameEngine.*;
 import static com.rxnqst.pvz.ImageManager.getTexture;
@@ -83,13 +86,14 @@ public class Render implements Runnable {
                     drawBottom(g2D);
                     drawPlants(g2D);
                     drawPeas(g2D);
-                    drawZombies(g2D);
+                    try {drawZombies(g2D);
+                    } catch (NoSuchFieldException | IllegalAccessException ignored) {}
                     if (drawHP) drawHP(g2D);
+                    drawLVL(g2D);
                     drawTop(g2D);
                     drawSun(g2D);
                     drawMouse(g2D);
                     //drawHitboxes(g2D);
-                    drawMultiplayerInfo(g2D);
                 }
                 g2D.dispose();
                 GameFrame.gamePanel.setScene(newScene);
@@ -98,17 +102,6 @@ public class Render implements Runnable {
                 } catch (InterruptedException ignored) {
                 }
             }
-        }
-    }
-
-    private void drawMultiplayerInfo(Graphics2D g2D) {
-        if (isMultiplayerOn) {
-            if (isServer) {
-                g2D.drawString("Multiplayer: server", 1700, 10);
-            } else {
-                g2D.drawString("Multiplayer: client", 1700, 10);
-            }
-            g2D.drawString("Server status: " + serverStatus, 1700, 30);
         }
     }
 
@@ -205,27 +198,31 @@ public class Render implements Runnable {
     private void drawHP(Graphics2D g2D) {
         for (int z = 0; z < zombieList.size(); z++) {
             Zombie zombie = zombieList.get(z);
-            g2D.drawString(zombie.hp + "", zombie.hitbox.x + 25, zombie.hitbox.y - 15);
+            g2D.drawString(zombie.hp + "", zombie.hitbox.x + zombie.hitbox.width/4, zombie.hitbox.y + zombie.hitbox.height+15);
         }
         for (int p = 0; p < plantList.size(); p++) {
             Plant plant = plantList.get(p);
-            if (plant instanceof Pumpkin) {
-                g2D.drawString(plant.hp + "", plant.hitbox.x + 25, plant.hitbox.y);
-                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y + 100);
-            } else {
-                g2D.drawString(plant.hp + "", plant.hitbox.x + 25, plant.hitbox.y - 15);
-                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y + 115);
-            }
+            if (plant instanceof Pumpkin)
+                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width/4, plant.hitbox.y - 15);
+            else
+                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width/4, plant.hitbox.y + plant.hitbox.height+15);
+        }
+    }
+    private void drawLVL(Graphics2D g2D) {
+        for (int p = 0; p < plantList.size(); p++) {
+            Plant plant = plantList.get(p);
+            if (plant instanceof Pumpkin)
+                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y - 30);
+            else
+                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y + plant.hitbox.height+30);
         }
     }
 
     private void drawPeas(Graphics2D g2D) {
         for (int p = 0; p < peaList.size(); ++p) {
             Pea pea = peaList.get(p);
-            g2D.setColor(pea.color);
-            g2D.fillOval(pea.hitbox.x, pea.hitbox.y, pea.size, pea.size);
+            g2D.drawImage(pea.image, pea.hitbox.x, pea.hitbox.y, null);
         }
-        g2D.setColor(Color.WHITE);
     }
 
     private void drawTop(Graphics2D g2D) {
@@ -310,10 +307,30 @@ public class Render implements Runnable {
         }
     }
 
-    private void drawZombies(Graphics2D g2D) {
+    private void drawZombies(Graphics2D g2D) throws NoSuchFieldException, IllegalAccessException {
         for (int i = 0; i < zombieList.size(); i++) {
             Zombie zombie = zombieList.get(i);
-            g2D.drawImage(getTexture(zombie.type), zombie.hitbox.x, zombie.hitbox.y, null);
+            Point frameSizeEat = null;
+            Point frameSizeWalk = null;
+            BufferedImage image;
+            if(zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead) {
+                frameSizeEat = (Point) zombie.getClass().getField("frameSizeEat").get(null);
+                frameSizeWalk = (Point) zombie.getClass().getField("frameSizeWalk").get(null);
+            }
+            if(frameSizeEat != null && frameSizeWalk != null) {
+                if(!zombie.isEating) {
+                    image = zombie.walkAtlas.getSubimage( frameSizeWalk.x * zombie.frameIndex, 0, frameSizeWalk.x, frameSizeWalk.y);
+                } else {
+                    image = zombie.eatAtlas.getSubimage(frameSizeEat.x * zombie.frameIndex, 0, frameSizeEat.x, frameSizeEat.y);
+                }
+                g2D.drawImage(
+                        image,
+                        zombie.hitbox.x,
+                        zombie.hitbox.y,
+                        null);
+            } else {
+                g2D.drawImage(getTexture(zombie.type), zombie.hitbox.x, zombie.hitbox.y, null);
+            }
         }
     }
 

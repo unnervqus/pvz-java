@@ -4,10 +4,11 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
 import static com.rxnqst.pvz.GameSettings.SUNFLOWER_PROD_TIME;
 
 public class Sunflower extends Plant {
-    public static final int RELOAD_TIME = 125;
+    public static final int RELOAD_TIME = 125 * SEED_RELOAD_MODIFIER;
     public static final int COST = 50;
     public static int RELOAD = 0;
     public int sunReload = SUNFLOWER_PROD_TIME;

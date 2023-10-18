@@ -3,7 +3,7 @@ package com.rxnqst.pvz.threads;
 import com.rxnqst.pvz.*;
 import com.rxnqst.pvz.peas.Pea;
 import com.rxnqst.pvz.peas.SnowPea;
-import com.rxnqst.pvz.peas.SpikePea;
+import com.rxnqst.pvz.peas.Needle;
 import com.rxnqst.pvz.plants.*;
 import com.rxnqst.pvz.plants.boomFamily.CherryBomb;
 import com.rxnqst.pvz.plants.boomFamily.IceMushroom;
@@ -141,6 +141,9 @@ public class Updater implements Runnable {
             if (keys[KeyEvent.VK_D] && !keysOnHold[KeyEvent.VK_D]) isPlantsGameMode = !isPlantsGameMode;
         } else {
             if (keys[KeyEvent.VK_ESCAPE]) selectedObject = null;
+            if (keys[KeyEvent.VK_Z] && !keysOnHold[KeyEvent.VK_Z]) {
+                zombieList.add(new BasicZombie(1700, 5));
+            }
             if (isServer) if (keys[KeyEvent.VK_S]) stopGame();
             if (isServer) if (keys[KeyEvent.VK_B]) continueGame();
             if (keys[KeyEvent.VK_H] && !keysOnHold[KeyEvent.VK_H]) drawHP = !drawHP;
@@ -210,17 +213,18 @@ public class Updater implements Runnable {
     private void calculateZombies() {
         for (int z = 0; z < zombieList.size(); ++z) {
             Zombie zombie = zombieList.get(z);
-            boolean zombieEat = false;
             for (int p = 0; p < plantList.size(); p++) {
                 Plant plant = plantList.get(p);
                 if (checkBoxesOverlap(zombie.head, plant.hitbox) && zombie.freezeDelay == 0) {
                     brainsAmount += Math.min(plant.hp, zombie.dmg);
                     plant.hp -= zombie.dmg;
-                    zombieEat = true;
+                    zombie.isEating = true;
                     break;
                 }
+                zombie.isEating = false;
             }
-            if (!zombieEat) {
+            if(plantList.size() == 0) zombie.isEating = false;
+            if (!zombie.isEating) {
                 if (zombie.freezeDelay > 0) --zombie.freezeDelay;
                 else {
                     zombie.hitbox.x -= zombie.speed;
@@ -274,12 +278,12 @@ public class Updater implements Runnable {
                         zombie.hp -= pea.dmg;
                         peaList.remove(pea);
                         break;
-                    } else if (pea instanceof SpikePea) {
-                        if (Arrays.stream(((SpikePea) pea).damagedZombies).filter(zombie1 -> zombie1 == zombie).toList().size() == 0) {
+                    } else if (pea instanceof Needle) {
+                        if (Arrays.stream(((Needle) pea).damagedZombies).filter(zombie1 -> zombie1 == zombie).toList().size() == 0) {
                             zombie.hp -= pea.dmg;
-                            ((SpikePea) pea).damagedZombies[((SpikePea) pea).zombieHits++] = zombie;
+                            ((Needle) pea).damagedZombies[((Needle) pea).zombieHits++] = zombie;
                         }
-                        if (((SpikePea) pea).zombieHits == ((SpikePea) pea).maxZombieHits) {
+                        if (((Needle) pea).zombieHits == ((Needle) pea).maxZombieHits) {
                             peaList.remove(pea);
                             break;
                         }
@@ -419,7 +423,7 @@ public class Updater implements Runnable {
     private void upgradePlant(Plant target) throws NoSuchFieldException, IllegalAccessException {
         if (target.level < 10) {
             target.levelUP();
-            selectedObject.objClass.getField("RELOAD").set(null, selectedObject.objClass.getField("RELOAD_TIME").getInt(null));
+            selectedObject.objClass.getField("RELOAD").set(null, selectedObject.objClass.getField("RELOAD_TIME").getInt(null) * SEED_RELOAD_MODIFIER);
             GameEngine.sunAmount -= selectedObject.objClass.getField("COST").getInt(null);
             GameEngine.selectedObject = null;
         }

@@ -108,10 +108,13 @@ public class PlantActions {
     public static void torchWood(TorchWood plant) {
         for (int p = 0; p < peaList.size(); p++) {
             Pea pea = peaList.get(p);
-            if(!(pea instanceof Watermelon) && !(pea instanceof Cabbage)) {
+            if(!(pea instanceof Watermelon) && !(pea instanceof Cabbage) && !(pea instanceof Puff)) {
                 if (checkBoxesOverlap(pea.hitbox, plant.hitbox) && !pea.isFired) {
                     pea.dmg += plant.extraDmg;
-                    pea.color = Color.YELLOW;
+                    if(pea instanceof Needle)
+                        pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_NEEDLE);
+                    else
+                        pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_PEA);
                     pea.isFired = true;
                 }
             }

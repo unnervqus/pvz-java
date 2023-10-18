@@ -4,8 +4,10 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class Cactus extends Plant {
-    public static final int RELOAD_TIME = 1000;
+    public static final int RELOAD_TIME = 1000 * SEED_RELOAD_MODIFIER;
     public static final int COST = 600;
     public static int RELOAD = RELOAD_TIME;
     public Cactus(int column, int line) {

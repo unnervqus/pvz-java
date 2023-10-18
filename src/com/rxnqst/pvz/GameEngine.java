@@ -33,6 +33,7 @@ import static com.rxnqst.pvz.GameSettings.BRAIN_BONUS_COOLDOWN;
 public class GameEngine implements KeyListener, MouseMotionListener, MouseListener {
     public static final Thread renderThread = new Thread(new Render());
     public static final Thread updateThread = new Thread(new Updater());
+    public static final Thread animationThread = new Thread(new AnimationManager());
     public static final WaveGenerator waveGenerator = new WaveGenerator();
     public static final Thread waveGenThread = new Thread(waveGenerator);
     public static boolean isGameRunning = false;
@@ -138,6 +139,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
         }
         renderThread.start();
         updateThread.start();
+        animationThread.start();
     }
 
     private static void loadConfigs() throws FileNotFoundException {

@@ -4,6 +4,7 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.utils.Rect;
 
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
 public abstract class Zombie implements Serializable {
@@ -16,11 +17,17 @@ public abstract class Zombie implements Serializable {
     public ImageManager.ImgName type;
     public int freezeDelay = 0;
     public int COST;
-    public Zombie(int posX, int line, int hp, int dmg, int speed, ImageManager.ImgName textureName) {
+    public BufferedImage walkAtlas;
+    public BufferedImage eatAtlas;
+    public int frameIndex = 0;
+    public boolean isEating = false;
+    public Zombie(int posX, int line, int hp, int dmg, int speed, ImageManager.ImgName textureName, BufferedImage walkAtlas, BufferedImage eatAtlas) {
         this.line = line;
         this.hp = hp;
         this.dmg = dmg;
         this.speed = speed;
         this.type = textureName;
+        this.eatAtlas = eatAtlas;
+        this.walkAtlas = walkAtlas;
     }
 }

@@ -4,8 +4,10 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class TorchWood extends Plant {
-    public static final int RELOAD_TIME = 600;
+    public static final int RELOAD_TIME = 600 * SEED_RELOAD_MODIFIER;
     public static final int COST = 550;
     public static int RELOAD = RELOAD_TIME;
     public int extraDmg;

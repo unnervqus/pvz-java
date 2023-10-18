@@ -4,8 +4,10 @@ import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class TallWallnut extends Plant {
-    public static final int RELOAD_TIME = 1400;
+    public static final int RELOAD_TIME = 1400 * SEED_RELOAD_MODIFIER;
     public static final int COST = 150;
     public static int RELOAD = RELOAD_TIME;
     public TallWallnut(int tileX, int tileY) {

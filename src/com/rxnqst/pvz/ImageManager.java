@@ -12,6 +12,7 @@ import static com.rxnqst.pvz.ImageManager.ImgName.*;
 public class ImageManager implements Serializable {
     private static final HashMap<ImgName, BufferedImage> textures = new HashMap<>();
     public enum ImgName {
+        // * GUI, ENVIRONMENT
         BUSH_1,
         BUSH_R,
         FIELD,
@@ -22,6 +23,16 @@ public class ImageManager implements Serializable {
         SHOVEL,
         SHOVEL_ICON,
         SUN,
+        // * PROJECTILES
+        PEA,
+        SNOW_PEA,
+        NEEDLE,
+        FIRE_PEA,
+        FIRE_NEEDLE,
+        WATERMELON,
+        CABBAGE,
+        PUFF,
+        // * PLANTS
         CABBAGE_PULT,
         CHERRY_BOMB,
         PEASHOOTER,
@@ -41,6 +52,7 @@ public class ImageManager implements Serializable {
         SPIKE_WEED,
         TALL_WALLNUT,
         TORCH_WOOD,
+        // * SEEDS
         CABBAGE_PULT_SEEDS,
         CHERRY_BOMB_SEEDS,
         PEASHOOTER_SEEDS,
@@ -59,6 +71,7 @@ public class ImageManager implements Serializable {
         TALL_WALLNUT_SEEDS,
         TORCH_WOOD_SEEDS,
         TRIPLE_PEASHOOTER_SEEDS,
+        // * ZOMBIES
         IMP,
         ZOMBIE_BASIC,
         ZOMBIE_BUCKETHEAD,
@@ -68,6 +81,7 @@ public class ImageManager implements Serializable {
         ZOMBONI,
         ZOMBIE_BALLOON,
         YETI,
+        // * ZOMBIE SEEDS
         IMP_SEEDS,
         ZOMBIE_BASIC_SEEDS,
         ZOMBIE_BUCKETHEAD_SEEDS,
@@ -90,6 +104,15 @@ public class ImageManager implements Serializable {
             textures.put(SHOVEL, ImageIO.read(new File("assets/gui/shovel selected.png")));
             textures.put(SHOVEL_ICON, ImageIO.read(new File("assets/gui/shovel_icon.png")));
             textures.put(SUN, ImageIO.read(new File("assets/gui/sun.png")));
+
+            textures.put(PEA, ImageIO.read(new File("assets/projectiles/pea.png")));
+            textures.put(SNOW_PEA, ImageIO.read(new File("assets/projectiles/snow_pea.png")));
+            textures.put(NEEDLE, ImageIO.read(new File("assets/projectiles/needle.png")));
+            textures.put(FIRE_PEA, ImageIO.read(new File("assets/projectiles/fire_pea.png")));
+            textures.put(FIRE_NEEDLE, ImageIO.read(new File("assets/projectiles/fire_needle.png")));
+            textures.put(WATERMELON, ImageIO.read(new File("assets/projectiles/watermelon.png")));
+            textures.put(CABBAGE, ImageIO.read(new File("assets/projectiles/cabbage.png")));
+            textures.put(PUFF, ImageIO.read(new File("assets/projectiles/puff.png")));
 
             textures.put(CABBAGE_PULT, ImageIO.read(new File("assets/plants/cabbage_pult.png")));
             textures.put(CHERRY_BOMB, ImageIO.read(new File("assets/plants/cherry_bomb.png")));
