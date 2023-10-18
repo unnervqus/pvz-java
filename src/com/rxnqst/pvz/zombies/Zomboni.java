@@ -10,4 +10,10 @@ public class Zomboni extends Zombie {
         hitbox = new Rect(posX, line * 150 + 100, 118, 118);
         head = new Rect(posX, line * 150 + 100, 118, 118);
     }
+    public Zomboni(Zombie zombie) {
+        super(zombie.hitbox.x, zombie.line, zombie.hp, zombie.dmg, zombie.speed,
+                ImageManager.ImgName.ZOMBONI,null, null);
+        this.hitbox = new Rect(zombie.hitbox.x, zombie.hitbox.y, 118, 118);
+        this.head = new Rect(zombie.hitbox.x, zombie.hitbox.y, 118, 118);
+    }
 }

@@ -69,7 +69,7 @@ public class Render implements Runnable {
     BufferedImage ZOMBIE_IMP_SEEDS = getTexture(ImgName.IMP_SEEDS);
     BufferedImage ZOMBIE_JACKBOX_SEEDS = getTexture(ImgName.ZOMBIE_JACKBOX_SEEDS);
     BufferedImage GRAVE_SEEDS = getTexture(ImgName.GRAVE_SEEDS);
-
+    BufferedImage FLAG_SEEDS = getTexture(ImgName.FLAG_SEEDS);
     BufferedImage SUN = getTexture(ImgName.SUN);
 
     @Override
@@ -333,6 +333,8 @@ public class Render implements Runnable {
                     g2D.drawImage(ZOMBIE_ZOMBONI_SEEDS, box.x, box.y, null);
                 if (chosenSeed.seedSlot == SeedSlot.GRAVE)
                     g2D.drawImage(GRAVE_SEEDS, box.x, box.y, null);
+                if (chosenSeed.seedSlot == SeedSlot.FLAG)
+                    g2D.drawImage(FLAG_SEEDS, box.x, box.y, null);
             }
         }
     }
@@ -342,22 +344,24 @@ public class Render implements Runnable {
             Zombie zombie = zombieList.get(i);
             Point frameSizeEat = null;
             Point frameSizeWalk = null;
-            BufferedImage image;
+            BufferedImage image = null;
             if (zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead) {
                 frameSizeEat = (Point) zombie.getClass().getField("frameSizeEat").get(null);
                 frameSizeWalk = (Point) zombie.getClass().getField("frameSizeWalk").get(null);
             }
             if (frameSizeEat != null && frameSizeWalk != null) {
-                if (!zombie.isEating) {
+                if (!zombie.isEating && zombie.walkAtlas != null) {
                     image = zombie.walkAtlas.getSubimage(frameSizeWalk.x * zombie.frameIndex, 0, frameSizeWalk.x, frameSizeWalk.y);
-                } else {
+                } else if (zombie.eatAtlas != null) {
                     image = zombie.eatAtlas.getSubimage(frameSizeEat.x * zombie.frameIndex, 0, frameSizeEat.x, frameSizeEat.y);
                 }
-                g2D.drawImage(
-                        image,
-                        zombie.hitbox.x,
-                        zombie.hitbox.y,
-                        null);
+                if (image != null) {
+                    g2D.drawImage(
+                            image,
+                            zombie.hitbox.x,
+                            zombie.hitbox.y,
+                            null);
+                }
             } else {
                 g2D.drawImage(getTexture(zombie.type), zombie.hitbox.x, zombie.hitbox.y, null);
             }
@@ -382,6 +386,8 @@ public class Render implements Runnable {
         if (selectedObject != null) {
             if (selectedObject == SeedSlot.GRAVE) {
                 g2D.drawImage(getTexture(ImgName.GRAVE_1), mouseX, mouseY, null);
+            } else if (selectedObject == SeedSlot.FLAG) {
+                g2D.drawImage(getTexture(ImgName.FLAG), mouseX, mouseY, null);
             } else {
                 g2D.drawImage(getTexture(ImgName.valueOf(selectedObject.toString())), mouseX, mouseY, null);
             }

@@ -6,17 +6,20 @@ import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.utils.Rect;
 
 import java.awt.image.BufferedImage;
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class Zombie extends GameObject implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6529685023217757690L;
     public Rect head;
     public int dmg;
     public int speed;
     public ImageManager.ImgName type;
     public int freezeDelay = 0;
     public int COST;
-    public BufferedImage walkAtlas;
-    public BufferedImage eatAtlas;
+    transient public BufferedImage walkAtlas;
+    transient public BufferedImage eatAtlas;
     public int frameIndex = 0;
     public boolean isEating = false;
     public Zombie(int posX, int line, int hp, int dmg, int speed, ImageManager.ImgName textureName, BufferedImage walkAtlas, BufferedImage eatAtlas) {

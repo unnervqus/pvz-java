@@ -20,4 +20,12 @@ public class ZombieBuckethead extends Zombie {
         this.hitbox = new Rect(posX, line * 150 + 100, 58, 100);
         this.head = new Rect(posX, line * 150 + 100, 50, 50);
     }
+    public ZombieBuckethead(Zombie zombie) {
+        super(zombie.hitbox.x, zombie.line, zombie.hp, zombie.dmg, zombie.speed,
+                ImageManager.ImgName.ZOMBIE_BUCKETHEAD,
+                AnimationManager.getTexture(ZOMBIE_BUCKET_WALK),
+                AnimationManager.getTexture(ZOMBIE_BUCKET_EAT));
+        this.hitbox = new Rect(zombie.hitbox.x, zombie.hitbox.y, 58, 100);
+        this.head = new Rect(zombie.hitbox.x, zombie.hitbox.y, 50, 50);
+    }
 }

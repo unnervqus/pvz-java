@@ -81,15 +81,20 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static Server server;
     public static Client client;
     public static boolean isPlantsGameMode = true;
+    //TODO: refactor classes Zombie, Plant, Grave, Pea.
+    //TODO: refactor enum classes to one enum class
     public static ArrayList<Plant> clientPlantQueue = new ArrayList<>();
     public static ArrayList<Zombie> clientZombieQueue = new ArrayList<>();
+    public static ArrayList<Grave> clientGraveQueue = new ArrayList<>();
 
     public static ArrayList<Plant> serverPlantQueue = new ArrayList<>();
     public static ArrayList<Zombie> serverZombieQueue = new ArrayList<>();
     public static ArrayList<Pea> serverPeaQueue = new ArrayList<>();
+    public static ArrayList<Grave> serverGraveQueue = new ArrayList<>();
 
     public static ArrayList<Plant> deadPlants = new ArrayList<>();
     public static ArrayList<Zombie> deadZombies = new ArrayList<>();
+    public static ArrayList<Grave> deadGraves = new ArrayList<>();
     // ! MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER
     public enum SeedSlot {
         // Plants
@@ -104,7 +109,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
         ZOMBIE_BASIC(BasicZombie.class), ZOMBIE_CONEHEAD(ZombieConehead.class), ZOMBIE_BUCKETHEAD(ZombieBuckethead.class),
         ZOMBIE_DOOR(ZombieDoor.class), ZOMBIE_BALLOON(BalloonZombie.class), ZOMBIE_JACKBOX(ZombieJackbox.class),
         YETI(Yeti.class), IMP(ZombieImp.class), ZOMBONI(Zomboni.class),
-        GRAVE(Grave.class),
+        GRAVE(Grave.class), FLAG(Object.class),
         // Shovel LOL
         SHOVEL(null);
         public final Class<?> objClass;
@@ -172,6 +177,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
             chosenSeeds.add(new ChosenSeed(SeedSlot.IMP, new Rect(93 + 86 * 7, 5, 64, 86)));
             chosenSeeds.add(new ChosenSeed(SeedSlot.ZOMBONI, new Rect(93 + 86 * 8, 5, 64, 86)));
             chosenSeeds.add(new ChosenSeed(SeedSlot.GRAVE, new Rect(93 + 86 * 9, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(SeedSlot.FLAG, new Rect(93 + 86 * 10, 5, 64, 86)));
         }
         if(isMultiplayerOn) {
             try {

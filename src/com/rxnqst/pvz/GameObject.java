@@ -2,7 +2,12 @@ package com.rxnqst.pvz;
 
 import com.rxnqst.pvz.utils.Rect;
 
-public class GameObject {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class GameObject implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6329685023217757690L;
     public Rect hitbox;
     public int hp;
     public int line;

@@ -21,4 +21,12 @@ public class BasicZombie extends Zombie {
         this.hitbox = new Rect(posX, line * 150 + 100, 54, 88);
         this.head = new Rect(posX, line*150+100, 45, 40);
     }
+    public BasicZombie(Zombie zombie) {
+        super(zombie.hitbox.x, zombie.line, zombie.hp, zombie.dmg, zombie.speed,
+                ImageManager.ImgName.ZOMBIE_BASIC,
+                AnimationManager.getTexture(ZOMBIE_BASIC_WALK),
+                AnimationManager.getTexture(ZOMBIE_BASIC_EAT));
+        this.hitbox = new Rect(zombie.hitbox.x, zombie.hitbox.y, 54, 88);
+        this.head = new Rect(zombie.hitbox.x, zombie.hitbox.y, 45, 40);
+    }
 }

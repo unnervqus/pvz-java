@@ -6,9 +6,12 @@ import com.rxnqst.pvz.GameObject;
 import com.rxnqst.pvz.peas.Pea;
 import com.rxnqst.pvz.utils.Rect;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class Plant extends GameObject implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6523135023217757690L;
     public int hp;
     public Rect hitbox;
     public int line;

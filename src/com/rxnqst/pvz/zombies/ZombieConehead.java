@@ -20,4 +20,12 @@ public class ZombieConehead extends Zombie {
         this.hitbox = new Rect(posX, line * 150 + 100, 54, 110);
         this.head = new Rect(posX, line * 150 + 100, 45, 60);
     }
+    public ZombieConehead(Zombie zombie) {
+        super(zombie.hitbox.x, zombie.line, zombie.hp, zombie.dmg, zombie.speed,
+                ImageManager.ImgName.ZOMBIE_CONEHEAD,
+                AnimationManager.getTexture(ZOMBIE_CONE_WALK),
+                AnimationManager.getTexture(ZOMBIE_CONE_EAT));
+        this.hitbox = new Rect(zombie.hitbox.x, zombie.hitbox.y, 54, 110);
+        this.head = new Rect(zombie.hitbox.x, zombie.hitbox.y, 45, 60);
+    }
 }

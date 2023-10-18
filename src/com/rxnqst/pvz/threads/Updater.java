@@ -308,6 +308,10 @@ public class Updater implements Runnable {
                 Grave grave = graveList.get(g);
                 if (checkBoxesOverlap(grave.hitbox, pea.hitbox)) {
                     grave.hp -= pea.dmg;
+                    if(grave.hp <= 0) {
+                        if(isMultiplayerOn) deadGraves.add(grave);
+                        graveList.remove(grave);
+                    }
                     peaList.remove(pea);
                 }
             }
@@ -344,7 +348,7 @@ public class Updater implements Runnable {
                         } else checkPlantClick();
                     } else {
                         checkZombieClick();
-                        checkGraveClick();
+                        checkMiscClick();
                     }
                 }
             }
@@ -363,7 +367,7 @@ public class Updater implements Runnable {
         }
     }
 
-    private void checkGraveClick() {
+    private void checkMiscClick() {
         if (selectedObject == GRAVE) {
             for (int x = 0; x < 12; x++) {
                 for (int y = 0; y < 6; y++) {
@@ -386,18 +390,50 @@ public class Updater implements Runnable {
                                 return;
                             }
                         }
-                        graveList.add(new Grave(x, y));
+                        Grave grave = new Grave(x, y);
+                        if(isMultiplayerOn) {
+                            if(isServer) {
+                                serverGraveQueue.add(grave);
+                                //do nothing
+                            } else {
+                                clientGraveQueue.add(grave);
+                            }
+                        }
+                        graveList.add(grave);
                         brainsAmount -= 500;
                         selectedObject = null;
                         return;
                     }
                 }
             }
+        } else if(selectedObject == FLAG) {
+            for (int g = 0; g < graveList.size(); g++) {
+                Grave grave = graveList.get(g);
+                int r = randomizer.nextInt(0, 5);
+                Zombie zombie = null;
+                switch (r) {
+                    //TODO: WTF, WHY DO I SPAWN THEY IN POSX AND LINE
+                    case 0 -> zombie = new BasicZombie(grave.column*150, grave.line);
+                    case 1 -> zombie = new ZombieConehead(grave.column*150, grave.line);
+                    case 2 -> zombie = new ZombieBuckethead(grave.column*150, grave.line);
+                    case 3 -> zombie = new ZombieImp(grave.column*150, grave.line);
+                    case 4 -> zombie = new ZombieDoor(grave.column*150, grave.line);
+                }
+                if(isMultiplayerOn) {
+                    if (isServer) {
+                        zombieList.add(zombie);
+                        serverZombieQueue.add(zombie);
+                    } else {
+                        clientZombieQueue.add(zombie);
+                    }
+                }
+            }
         }
+        selectedObject = null;
     }
 
     private void checkZombieClick() throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        if (selectedObject != GRAVE) {
+        if (selectedObject != GRAVE && selectedObject != FLAG) {
             for (int y = 0; y < 6; y++) {
                 if ((clickY - 100) / 150 == y) {
                     if (selectedObject.objClass.getField("COST").getInt(null) <= brainsAmount) {

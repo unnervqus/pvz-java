@@ -8,7 +8,7 @@ import com.rxnqst.pvz.utils.Rect;
 import java.awt.image.BufferedImage;
 
 public class Grave extends GameObject {
-    public BufferedImage image;
+    public transient BufferedImage image;
     public static int COST = 500;
     public Grave(int column, int line) {
         super(line, column,  0,0, 10000 );

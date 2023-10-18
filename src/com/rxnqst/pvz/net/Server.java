@@ -1,9 +1,9 @@
 package com.rxnqst.pvz.net;
 
-import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.GameSettings;
+import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.plants.Plant;
-import com.rxnqst.pvz.zombies.Zombie;
+import com.rxnqst.pvz.zombies.*;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -33,9 +33,13 @@ public class Server {
                         sendPeas();
                         sendDeadPlants();
                         sendDeadZombies();
+                        sendDeadGraves();
                         output.writeInt(brainsAmount);
                         output.flush();
-                        if(isPlantsGameMode) readZombies();
+                        if(isPlantsGameMode) {
+                            readZombies();
+                            readGraves();
+                        }
                         else readPlants();
                         Thread.sleep(25);
                     }
@@ -47,6 +51,36 @@ public class Server {
                 }
             }
         })).start();
+    }
+
+    private void sendDeadGraves() throws IOException {
+        output.writeInt(deadGraves.size());
+        for (int z = 0; z < deadGraves.size(); z++) output.writeObject(deadGraves.get(z));
+        output.flush();
+        deadGraves.clear();
+    }
+
+    private void readGraves() throws IOException, ClassNotFoundException {
+        int queueSize = input.readInt();
+        for (int p = 0; p < queueSize; p++) {
+            Grave grave = (Grave) input.readObject();
+            // im so good at coding XD
+            int r = randomizer.nextInt(0, 2);
+            switch (r) {
+                case 0 -> {
+                    grave.image = ImageManager.getTexture(ImageManager.ImgName.GRAVE_1);
+                    grave.hitbox.width = 106;
+                    grave.hitbox.height = 122;
+                }
+                case 1 -> {
+                    grave.image = ImageManager.getTexture(ImageManager.ImgName.GRAVE_2);
+                    grave.hitbox.width = 92;
+                    grave.hitbox.height = 106;
+                    grave.hitbox.x += 10;
+                }
+            }
+            graveList.add(grave);
+        }
     }
 
     private void sendDeadZombies() throws IOException {
@@ -88,7 +122,18 @@ public class Server {
         int zombieQueue = input.readInt();
         for (int p = 0; p < zombieQueue; p++) {
             Zombie zombie = (Zombie) input.readObject();
-            zombieList.add(zombie);
+            Zombie realZombie = null;
+            //TODO: make abstraction above this garbage of code (somehow)
+            if(zombie instanceof BasicZombie) realZombie = new BasicZombie(zombie);
+            if(zombie instanceof ZombieConehead) realZombie = new ZombieConehead(zombie);
+            if(zombie instanceof ZombieBuckethead) realZombie = new ZombieBuckethead(zombie);
+            if(zombie instanceof ZombieDoor) realZombie = new ZombieDoor(zombie);
+            if(zombie instanceof ZombieImp) realZombie = new ZombieImp(zombie);
+            if(zombie instanceof BalloonZombie) realZombie = new BalloonZombie(zombie);
+            if(zombie instanceof Yeti) realZombie = new Yeti(zombie);
+            if(zombie instanceof Zomboni) realZombie = new Zomboni(zombie);
+            if(zombie instanceof ZombieJackbox) realZombie = new ZombieJackbox(zombie);
+            zombieList.add(realZombie);
             SeedSlot zombieType = SeedSlot.valueOf(zombie.type.toString());
             brainsAmount -= zombieType.objClass.getField("COST").getInt(null);
             serverZombieQueue.add(zombie);
