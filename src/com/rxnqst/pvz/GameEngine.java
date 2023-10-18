@@ -45,7 +45,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static boolean isMouseClicked = false;
     public static boolean isGameOver = false;
     public static boolean drawHP = false;
-    public static int fog_position = 1500;
+    public static int fogPosition = 1500;
     public static int sunAmount = 50;
     public static int brainsAmount = 50;
     public static int brainBonus = 250;
@@ -77,11 +77,13 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static boolean isPlantsGameMode = true;
     public static ArrayList<Plant> clientPlantQueue = new ArrayList<>();
     public static ArrayList<Zombie> clientZombieQueue = new ArrayList<>();
-    public static ArrayList<Pea> clientPeaQueue = new ArrayList<>();
 
     public static ArrayList<Plant> serverPlantQueue = new ArrayList<>();
     public static ArrayList<Zombie> serverZombieQueue = new ArrayList<>();
     public static ArrayList<Pea> serverPeaQueue = new ArrayList<>();
+
+    public static ArrayList<Plant> deadPlants = new ArrayList<>();
+    public static ArrayList<Zombie> deadZombies = new ArrayList<>();
     // ! MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER
     public enum SeedSlot {
         // Plants
@@ -110,8 +112,6 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static void createGame() throws FileNotFoundException {
         loadConfigs();
         isGameRunning = true;
-        plantList.add(new SpikeRock(10, 3));
-        zombieList.add(new Zomboni(1900, 3));
         // 16,14
         seedSlots.put(SeedSlot.SUNFLOWER, new Rect(25, 150, 64, 86));
         seedSlots.put(SeedSlot.PEASHOOTER, new Rect(105, 150, 64, 86));

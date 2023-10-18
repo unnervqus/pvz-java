@@ -235,7 +235,7 @@ public class Render implements Runnable {
         g2D.drawImage(BUSH_1, -65 + 1650, 950, null);
         g2D.drawImage(BUSH_R, 1740, 0, null);
         if (isPlantsGameMode) {
-            g2D.drawImage(FOG, fog_position, 0, null);
+            g2D.drawImage(FOG, fogPosition, 0, null);
             g2D.drawImage(SEED_INTERFACE, 0, 0, null);
             g2D.drawImage(SHOVEL_ICON, 1050, 0, null);
             for (ChosenSeed chosenSeed : chosenSeeds) {

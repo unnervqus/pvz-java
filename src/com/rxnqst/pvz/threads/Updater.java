@@ -19,6 +19,7 @@ import com.rxnqst.pvz.zombies.*;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
 import static com.rxnqst.pvz.GameEngine.*;
@@ -144,23 +145,22 @@ public class Updater implements Runnable {
             if (isServer) if (keys[KeyEvent.VK_B]) continueGame();
             if (keys[KeyEvent.VK_H] && !keysOnHold[KeyEvent.VK_H]) drawHP = !drawHP;
             if (keys[KeyEvent.VK_1]) selectedObject = chosenSeeds.get(0).seedSlot;
-            if (keys[KeyEvent.VK_2] && chosenSeeds.size() > 1) selectedObject = chosenSeeds.get(1).seedSlot;
-            if (keys[KeyEvent.VK_3] && chosenSeeds.size() > 2) selectedObject = chosenSeeds.get(2).seedSlot;
-            if (keys[KeyEvent.VK_4] && chosenSeeds.size() > 3) selectedObject = chosenSeeds.get(3).seedSlot;
-            if (keys[KeyEvent.VK_5] && chosenSeeds.size() > 4) selectedObject = chosenSeeds.get(4).seedSlot;
-            if (keys[KeyEvent.VK_6] && chosenSeeds.size() > 5) selectedObject = chosenSeeds.get(5).seedSlot;
-            if (keys[KeyEvent.VK_7] && chosenSeeds.size() > 6) selectedObject = chosenSeeds.get(6).seedSlot;
-            if (keys[KeyEvent.VK_8] && chosenSeeds.size() > 7) selectedObject = chosenSeeds.get(7).seedSlot;
-            if (keys[KeyEvent.VK_9] && chosenSeeds.size() > 8) selectedObject = chosenSeeds.get(8).seedSlot;
-            if (keys[KeyEvent.VK_0] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(9).seedSlot;
-            if (keys[KeyEvent.VK_MINUS] && chosenSeeds.size() > 10 && isServer)
-                selectedObject = chosenSeeds.get(10).seedSlot;
+            if (keys[KeyEvent.VK_2] && chosenSeeds.size() > 2) selectedObject = chosenSeeds.get(1).seedSlot;
+            if (keys[KeyEvent.VK_3] && chosenSeeds.size() > 3) selectedObject = chosenSeeds.get(2).seedSlot;
+            if (keys[KeyEvent.VK_4] && chosenSeeds.size() > 4) selectedObject = chosenSeeds.get(3).seedSlot;
+            if (keys[KeyEvent.VK_5] && chosenSeeds.size() > 5) selectedObject = chosenSeeds.get(4).seedSlot;
+            if (keys[KeyEvent.VK_6] && chosenSeeds.size() > 6) selectedObject = chosenSeeds.get(5).seedSlot;
+            if (keys[KeyEvent.VK_7] && chosenSeeds.size() > 7) selectedObject = chosenSeeds.get(6).seedSlot;
+            if (keys[KeyEvent.VK_8] && chosenSeeds.size() > 8) selectedObject = chosenSeeds.get(7).seedSlot;
+            if (keys[KeyEvent.VK_9] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(8).seedSlot;
+            if (keys[KeyEvent.VK_0] && chosenSeeds.size() > 10) selectedObject = chosenSeeds.get(9).seedSlot;
+            if (keys[KeyEvent.VK_MINUS] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(10).seedSlot;
         }
     }
 
     private void updateFogPosition() {
-        fog_position = 1500 - (zombieKilled / 3);
-        if (fog_position < 0) fog_position = 0;
+        fogPosition = 1500 - (zombieKilled / 3);
+        if (fogPosition < 0) fogPosition = 0;
     }
 
     private void calculatePlants() {
@@ -182,7 +182,14 @@ public class Updater implements Runnable {
                 PlantActions.torchWood((TorchWood) plant);
             if (plant.reloadCooldown > 0) --plant.reloadCooldown;
         }
-        plantList.removeIf(plant -> plant.hp <= 0);
+        Iterator<Plant> plantIter = plantList.iterator();
+        while (plantIter.hasNext()) {
+            Plant plant = plantIter.next();
+            if(plant.hp <= 0) {
+                deadPlants.add(plant);
+                plantIter.remove();
+            }
+        }
     }
 
     private void calculateSunsMove() {
@@ -226,6 +233,7 @@ public class Updater implements Runnable {
             if (zombie.type == ImgName.ZOMBIE_JACKBOX) ZombieActions.jackInTheBox((ZombieJackbox) zombie);
             if (zombie.hp <= 0) {
                 zombieKilled += 1;
+                deadZombies.add(zombie);
                 zombieList.remove(zombie);
             }
         }
@@ -409,10 +417,12 @@ public class Updater implements Runnable {
     }
 
     private void upgradePlant(Plant target) throws NoSuchFieldException, IllegalAccessException {
-        target.levelUP();
-        selectedObject.objClass.getField("RELOAD").set(null, selectedObject.objClass.getField("RELOAD_TIME").getInt(null));
-        GameEngine.sunAmount -= selectedObject.objClass.getField("COST").getInt(null);
-        GameEngine.selectedObject = null;
+        if (target.level < 10) {
+            target.levelUP();
+            selectedObject.objClass.getField("RELOAD").set(null, selectedObject.objClass.getField("RELOAD_TIME").getInt(null));
+            GameEngine.sunAmount -= selectedObject.objClass.getField("COST").getInt(null);
+            GameEngine.selectedObject = null;
+        }
     }
 
     private boolean checkAnyBoxCollision() throws NoSuchFieldException, IllegalAccessException {
@@ -428,7 +438,7 @@ public class Updater implements Runnable {
                             return true;
                         }
                     }
-                } else {
+                } else if (chosenSeed.seedSlot != SHOVEL) {
                     selectedObject = chosenSeed.seedSlot;
                     return true;
                 }
@@ -440,19 +450,24 @@ public class Updater implements Runnable {
     private void checkShovelClick() {
         int lineX = 0;
         int lineY = 0;
+        boolean isPlantDugOut = false;
         for (int x = 0; x < 12; x++) {
             for (int y = 0; y < 6; y++) {
                 if (checkCollision(tiles[x][y], clickX, clickY)) {
                     lineX = x;
                     lineY = y;
+                    isPlantDugOut = true;
                 }
             }
         }
-        for (Plant plant : plantList) {
-            if (plant.column == lineX && plant.line == lineY) {
-                plantList.remove(plant);
-                selectedObject = null;
-                break;
+        if(isPlantDugOut) {
+            for (Plant plant : plantList) {
+                if (plant.column == lineX && plant.line == lineY) {
+                    deadPlants.add(plant);
+                    plantList.remove(plant);
+                    selectedObject = null;
+                    break;
+                }
             }
         }
     }

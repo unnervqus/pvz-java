@@ -31,11 +31,13 @@ public class Server {
                         sendPlants();
                         sendZombies();
                         sendPeas();
+                        sendDeadPlants();
+                        sendDeadZombies();
                         output.writeInt(brainsAmount);
                         output.flush();
                         if(isPlantsGameMode) readZombies();
                         else readPlants();
-                        Thread.sleep(100);
+                        Thread.sleep(25);
                     }
                     clientSocket.close();
                     serverSocket.close();
@@ -45,6 +47,20 @@ public class Server {
                 }
             }
         })).start();
+    }
+
+    private void sendDeadZombies() throws IOException {
+        output.writeInt(deadZombies.size());
+        for (int z = 0; z < deadZombies.size(); z++) output.writeObject(deadZombies.get(z));
+        output.flush();
+        deadZombies.clear();
+    }
+
+    private void sendDeadPlants() throws IOException {
+        output.writeInt(deadPlants.size());
+        for (int p = 0; p < deadPlants.size(); p++) output.writeObject(deadPlants.get(p));
+        output.flush();
+        deadPlants.clear();
     }
 
     private void sendPeas() throws IOException {

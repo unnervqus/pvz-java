@@ -7,6 +7,7 @@ import com.rxnqst.pvz.zombies.Zombie;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import static com.rxnqst.pvz.GameEngine.*;
 
@@ -26,10 +27,12 @@ public class Client {
                         readPlants();
                         readZombies();
                         readPeas();
+                        readDeadPlants();
+                        readDeadZombies();
                         brainsAmount = input.readInt();
                         if(isPlantsGameMode) sendPlants();
                         else sendZombies();
-                        Thread.sleep(100);
+                        Thread.sleep(25);
                     }
                 }
                 socket.close();
@@ -39,9 +42,34 @@ public class Client {
         })).start();
     }
 
+    private void readDeadZombies() throws IOException, ClassNotFoundException {
+        int queueSize = input.readInt();
+        ArrayList<Zombie> deadZombies = new ArrayList<>();
+        for (int p = 0; p < queueSize; p++) {
+            deadZombies.add((Zombie) input.readObject());
+        }
+        zombieList.forEach(zombie -> {
+            if(deadZombies.contains(zombie)) zombie.hp = 0;
+        });
+        deadZombies.clear();
+    }
+
+    private void readDeadPlants() throws IOException, ClassNotFoundException {
+        int queueSize = input.readInt();
+        ArrayList<Plant> deadPlants = new ArrayList<>();
+        for (int p = 0; p < queueSize; p++) {
+            deadPlants.add((Plant) input.readObject());
+        }
+        plantList.forEach(plant -> {
+            if(deadPlants.contains(plant)) plant.hp = 0;
+        });
+        deadPlants.clear();
+    }
+
+
     private void readPeas() throws IOException, ClassNotFoundException {
-        int peaQueue = input.readInt();
-        for (int p = 0; p < peaQueue; p++) {
+        int queueSize = input.readInt();
+        for (int p = 0; p < queueSize; p++) {
             peaList.add((Pea) input.readObject());
         }
     }
@@ -61,8 +89,8 @@ public class Client {
     }
 
     private void readZombies() throws IOException, ClassNotFoundException {
-        int zombieQueue = input.readInt();
-        for (int p = 0; p < zombieQueue; p++) {
+        int queueSize = input.readInt();
+        for (int p = 0; p < queueSize; p++) {
             zombieList.add((Zombie) input.readObject());
         }
     }
