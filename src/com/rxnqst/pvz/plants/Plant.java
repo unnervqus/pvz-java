@@ -2,12 +2,13 @@ package com.rxnqst.pvz.plants;
 
 import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.GameEngine.SeedSlot;
+import com.rxnqst.pvz.GameObject;
 import com.rxnqst.pvz.peas.Pea;
 import com.rxnqst.pvz.utils.Rect;
 
 import java.io.Serializable;
 
-public abstract class Plant implements Serializable {
+public abstract class Plant extends GameObject implements Serializable {
     public int hp;
     public Rect hitbox;
     public int line;
@@ -19,6 +20,8 @@ public abstract class Plant implements Serializable {
     public int level;
     public int frameIndex = 0;
     public Plant(int hp, int tileX, int tileY, SeedSlot texture_name, boolean canShoot) {
+        //TODO: make better abstraction, not this sh!t
+        super(0,0,0,0,0);
         this.hp = hp;
         this.level = 1;
         this.line = tileY;

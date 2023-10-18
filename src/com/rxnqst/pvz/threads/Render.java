@@ -3,6 +3,7 @@ package com.rxnqst.pvz.threads;
 import com.rxnqst.pvz.ChosenSeed;
 import com.rxnqst.pvz.GameEngine;
 import com.rxnqst.pvz.Sun;
+import com.rxnqst.pvz.effects.Effect;
 import com.rxnqst.pvz.gui.GameFrame;
 import com.rxnqst.pvz.peas.*;
 import com.rxnqst.pvz.plants.*;
@@ -19,10 +20,7 @@ import com.rxnqst.pvz.plants.helpFamily.SpikeWeed;
 import com.rxnqst.pvz.plants.helpFamily.Sunflower;
 import com.rxnqst.pvz.plants.helpFamily.TorchWood;
 import com.rxnqst.pvz.utils.Rect;
-import com.rxnqst.pvz.zombies.BasicZombie;
-import com.rxnqst.pvz.zombies.Zombie;
-import com.rxnqst.pvz.zombies.ZombieBuckethead;
-import com.rxnqst.pvz.zombies.ZombieConehead;
+import com.rxnqst.pvz.zombies.*;
 
 import static com.rxnqst.pvz.GameEngine.*;
 import static com.rxnqst.pvz.ImageManager.getTexture;
@@ -70,6 +68,8 @@ public class Render implements Runnable {
     BufferedImage ZOMBIE_DOOR_SEEDS = getTexture(ImgName.ZOMBIE_DOOR_SEEDS);
     BufferedImage ZOMBIE_IMP_SEEDS = getTexture(ImgName.IMP_SEEDS);
     BufferedImage ZOMBIE_JACKBOX_SEEDS = getTexture(ImgName.ZOMBIE_JACKBOX_SEEDS);
+    BufferedImage GRAVE_SEEDS = getTexture(ImgName.GRAVE_SEEDS);
+
     BufferedImage SUN = getTexture(ImgName.SUN);
 
     @Override
@@ -85,11 +85,15 @@ public class Render implements Runnable {
                 } else {
                     drawBottom(g2D);
                     drawPlants(g2D);
+                    drawGraves(g2D);
                     drawPeas(g2D);
-                    try {drawZombies(g2D);
-                    } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+                    try {
+                        drawZombies(g2D);
+                    } catch (NoSuchFieldException | IllegalAccessException ignored) {
+                    }
                     if (drawHP) drawHP(g2D);
                     drawLVL(g2D);
+                    drawEffects(g2D);
                     drawTop(g2D);
                     drawSun(g2D);
                     drawMouse(g2D);
@@ -102,6 +106,25 @@ public class Render implements Runnable {
                 } catch (InterruptedException ignored) {
                 }
             }
+        }
+    }
+
+    private void drawGraves(Graphics2D g2D) {
+        for (int g = 0; g < graveList.size(); g++) {
+            Grave grave = graveList.get(g);
+            g2D.drawImage(grave.image, grave.hitbox.x, grave.hitbox.y, null);
+        }
+    }
+
+    private void drawEffects(Graphics2D g2D) {
+        for (int e = 0; e < effectList.size(); e++) {
+            Effect ef = effectList.get(e);
+            BufferedImage img = ef.atlas.getSubimage(
+                    ef.hitbox.width * ef.frameIndex,
+                    0,
+                    ef.hitbox.width,
+                    ef.hitbox.height);
+            g2D.drawImage(img, ef.hitbox.x, ef.hitbox.y, null);
         }
     }
 
@@ -198,23 +221,28 @@ public class Render implements Runnable {
     private void drawHP(Graphics2D g2D) {
         for (int z = 0; z < zombieList.size(); z++) {
             Zombie zombie = zombieList.get(z);
-            g2D.drawString(zombie.hp + "", zombie.hitbox.x + zombie.hitbox.width/4, zombie.hitbox.y + zombie.hitbox.height+15);
+            g2D.drawString(zombie.hp + "", zombie.hitbox.x + zombie.hitbox.width / 4, zombie.hitbox.y + zombie.hitbox.height + 15);
         }
         for (int p = 0; p < plantList.size(); p++) {
             Plant plant = plantList.get(p);
             if (plant instanceof Pumpkin)
-                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width/4, plant.hitbox.y - 15);
+                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width / 4, plant.hitbox.y - 15);
             else
-                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width/4, plant.hitbox.y + plant.hitbox.height+15);
+                g2D.drawString(plant.hp + "", plant.hitbox.x + plant.hitbox.width / 4, plant.hitbox.y + plant.hitbox.height + 15);
+        }
+        for (int g = 0; g < graveList.size(); g++) {
+            Grave grave = graveList.get(g);
+            g2D.drawString(grave.hp + "", grave.hitbox.x + grave.hitbox.width / 4, grave.hitbox.y + grave.hitbox.height + 15);
         }
     }
+
     private void drawLVL(Graphics2D g2D) {
         for (int p = 0; p < plantList.size(); p++) {
             Plant plant = plantList.get(p);
             if (plant instanceof Pumpkin)
                 g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y - 30);
             else
-                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y + plant.hitbox.height+30);
+                g2D.drawString("LVL " + plant.level, plant.hitbox.x + 10, plant.hitbox.y + plant.hitbox.height + 30);
         }
     }
 
@@ -303,6 +331,8 @@ public class Render implements Runnable {
                     g2D.drawImage(ZOMBIE_BALLOON_SEEDS, box.x, box.y, null);
                 if (chosenSeed.seedSlot == SeedSlot.ZOMBONI)
                     g2D.drawImage(ZOMBIE_ZOMBONI_SEEDS, box.x, box.y, null);
+                if (chosenSeed.seedSlot == SeedSlot.GRAVE)
+                    g2D.drawImage(GRAVE_SEEDS, box.x, box.y, null);
             }
         }
     }
@@ -313,13 +343,13 @@ public class Render implements Runnable {
             Point frameSizeEat = null;
             Point frameSizeWalk = null;
             BufferedImage image;
-            if(zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead) {
+            if (zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead) {
                 frameSizeEat = (Point) zombie.getClass().getField("frameSizeEat").get(null);
                 frameSizeWalk = (Point) zombie.getClass().getField("frameSizeWalk").get(null);
             }
-            if(frameSizeEat != null && frameSizeWalk != null) {
-                if(!zombie.isEating) {
-                    image = zombie.walkAtlas.getSubimage( frameSizeWalk.x * zombie.frameIndex, 0, frameSizeWalk.x, frameSizeWalk.y);
+            if (frameSizeEat != null && frameSizeWalk != null) {
+                if (!zombie.isEating) {
+                    image = zombie.walkAtlas.getSubimage(frameSizeWalk.x * zombie.frameIndex, 0, frameSizeWalk.x, frameSizeWalk.y);
                 } else {
                     image = zombie.eatAtlas.getSubimage(frameSizeEat.x * zombie.frameIndex, 0, frameSizeEat.x, frameSizeEat.y);
                 }
@@ -348,8 +378,14 @@ public class Render implements Runnable {
     }
 
     private void drawMouse(Graphics2D g2D) {
-        if (selectedObject != null)
-            g2D.drawImage(getTexture(ImgName.valueOf(selectedObject.toString())), mouseX, mouseY, null);
+        //TODO: move all images to its classes (make them as class field)
+        if (selectedObject != null) {
+            if (selectedObject == SeedSlot.GRAVE) {
+                g2D.drawImage(getTexture(ImgName.GRAVE_1), mouseX, mouseY, null);
+            } else {
+                g2D.drawImage(getTexture(ImgName.valueOf(selectedObject.toString())), mouseX, mouseY, null);
+            }
+        }
         for (int x = 0; x < 12; x++) {
             for (int y = 0; y < 6; y++) {
                 if (checkCollision(tiles[x][y], mouseX, mouseY)) {

@@ -81,6 +81,10 @@ public class ImageManager implements Serializable {
         ZOMBONI,
         ZOMBIE_BALLOON,
         YETI,
+        GRAVE_1,
+        GRAVE_2,
+        //GRAVE_3,
+        //GRAVE_4,
         // * ZOMBIE SEEDS
         IMP_SEEDS,
         ZOMBIE_BASIC_SEEDS,
@@ -91,6 +95,8 @@ public class ImageManager implements Serializable {
         ZOMBONI_SEEDS,
         ZOMBIE_BALLOON_SEEDS,
         YETI_SEEDS,
+        GRAVE_SEEDS,
+        FLAG_SEEDS
     }
     public static void loadTextures() {
         try {
@@ -162,6 +168,10 @@ public class ImageManager implements Serializable {
             textures.put(ZOMBONI, ImageIO.read(new File("assets/zombie/zomboni.png")));
             textures.put(ZOMBIE_BALLOON, ImageIO.read(new File("assets/zombie/zombie balloon.png")));
             textures.put(YETI, ImageIO.read(new File("assets/zombie/yeti.png")));
+            textures.put(GRAVE_1, ImageIO.read(new File("assets/zombie/grave_1.png")));
+            textures.put(GRAVE_2, ImageIO.read(new File("assets/zombie/grave_2.png")));
+            //textures.put(GRAVE_3, ImageIO.read(new File("assets/zombie/grave3.png")));
+            //textures.put(GRAVE_4, ImageIO.read(new File("assets/zombie/grave4.png")));
 
             textures.put(IMP_SEEDS, ImageIO.read(new File("assets/zombie_seeds/imp seeds.png")));
             textures.put(ZOMBIE_BASIC_SEEDS, ImageIO.read(new File("assets/zombie_seeds/zombie basic seeds.png")));
@@ -172,6 +182,8 @@ public class ImageManager implements Serializable {
             textures.put(ZOMBONI_SEEDS, ImageIO.read(new File("assets/zombie_seeds/zomboni seeds.png")));
             textures.put(ZOMBIE_BALLOON_SEEDS, ImageIO.read(new File("assets/zombie_seeds/zombie balloon seeds.png")));
             textures.put(YETI_SEEDS, ImageIO.read(new File("assets/zombie_seeds/yeti seeds.png")));
+            textures.put(GRAVE_SEEDS, ImageIO.read(new File("assets/zombie_seeds/grave seeds.png")));
+            textures.put(FLAG_SEEDS, ImageIO.read(new File("assets/zombie_seeds/grave seeds.png")));
         } catch (IOException e) {
             e.printStackTrace();
         }

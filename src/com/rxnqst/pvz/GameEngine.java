@@ -1,5 +1,6 @@
 package com.rxnqst.pvz;
 
+import com.rxnqst.pvz.effects.Effect;
 import com.rxnqst.pvz.net.Client;
 import com.rxnqst.pvz.net.Server;
 import com.rxnqst.pvz.peas.Pea;
@@ -16,6 +17,7 @@ import com.rxnqst.pvz.plants.helpFamily.SpikeRock;
 import com.rxnqst.pvz.plants.helpFamily.SpikeWeed;
 import com.rxnqst.pvz.plants.helpFamily.Sunflower;
 import com.rxnqst.pvz.plants.helpFamily.TorchWood;
+import com.rxnqst.pvz.threads.Animator;
 import com.rxnqst.pvz.threads.Render;
 import com.rxnqst.pvz.threads.Updater;
 import com.rxnqst.pvz.threads.WaveGenerator;
@@ -33,7 +35,7 @@ import static com.rxnqst.pvz.GameSettings.BRAIN_BONUS_COOLDOWN;
 public class GameEngine implements KeyListener, MouseMotionListener, MouseListener {
     public static final Thread renderThread = new Thread(new Render());
     public static final Thread updateThread = new Thread(new Updater());
-    public static final Thread animationThread = new Thread(new AnimationManager());
+    public static final Thread animationThread = new Thread(new Animator());
     public static final WaveGenerator waveGenerator = new WaveGenerator();
     public static final Thread waveGenThread = new Thread(waveGenerator);
     public static boolean isGameRunning = false;
@@ -54,11 +56,14 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static int brainBonusCooldown = BRAIN_BONUS_COOLDOWN;
     public static final ArrayList<ChosenSeed> chosenSeeds = new ArrayList<>();
     public static final HashMap<SeedSlot, Rect> seedSlots = new HashMap<>();
+    public static ArrayList<Effect> effectList = new ArrayList<>();
     public static ArrayList<Plant> plantList = new ArrayList<>();
     public static ArrayList<Zombie> zombieList = new ArrayList<>();
+    public static ArrayList<Grave> graveList = new ArrayList<>();
     public static ArrayList<Sun> sunList = new ArrayList<>();
     public static ArrayList<Pea> peaList = new ArrayList<>();
     public static Rect[][] tiles = new Rect[12][6];
+    public static Random randomizer = new Random();
 
     public static int zombieKilled = 0;
     public static int wavesCompleted = 0;
@@ -99,6 +104,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
         ZOMBIE_BASIC(BasicZombie.class), ZOMBIE_CONEHEAD(ZombieConehead.class), ZOMBIE_BUCKETHEAD(ZombieBuckethead.class),
         ZOMBIE_DOOR(ZombieDoor.class), ZOMBIE_BALLOON(BalloonZombie.class), ZOMBIE_JACKBOX(ZombieJackbox.class),
         YETI(Yeti.class), IMP(ZombieImp.class), ZOMBONI(Zomboni.class),
+        GRAVE(Grave.class),
         // Shovel LOL
         SHOVEL(null);
         public final Class<?> objClass;
@@ -137,6 +143,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
                 tiles[x][y] = new Rect(150 * x, 90 + 150 * y, 150, 150);
             }
         }
+        brainsAmount = 10000;
         renderThread.start();
         updateThread.start();
         animationThread.start();
@@ -164,6 +171,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
             chosenSeeds.add(new ChosenSeed(SeedSlot.YETI, new Rect(93 + 86 * 6, 5, 64, 86)));
             chosenSeeds.add(new ChosenSeed(SeedSlot.IMP, new Rect(93 + 86 * 7, 5, 64, 86)));
             chosenSeeds.add(new ChosenSeed(SeedSlot.ZOMBONI, new Rect(93 + 86 * 8, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(SeedSlot.GRAVE, new Rect(93 + 86 * 9, 5, 64, 86)));
         }
         if(isMultiplayerOn) {
             try {

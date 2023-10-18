@@ -7,7 +7,7 @@ import com.rxnqst.pvz.utils.Rect;
 import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
 
 public class PotatoMine extends Plant {
-    public int armoringTime = 500;
+    public int armoringTime = 500-500;
     public static final int RELOAD_TIME = 1000 * SEED_RELOAD_MODIFIER;
     public static final int COST = 25;
     public static int RELOAD = RELOAD_TIME;

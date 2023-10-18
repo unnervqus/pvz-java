@@ -3,24 +3,23 @@ package com.rxnqst.pvz;
 import com.rxnqst.pvz.peas.*;
 import com.rxnqst.pvz.plants.*;
 import com.rxnqst.pvz.plants.attackFamily.*;
-import com.rxnqst.pvz.zombies.Zombie;
 
 import static com.rxnqst.pvz.GameEngine.*;
 import static com.rxnqst.pvz.GameSettings.PEA_RELOAD_TIME;
 
 public class PeaCreator {
-    public static void createPea(Plant plant, Zombie zombie) {
-        if (plant.type == GameEngine.SeedSlot.TRIPLE_PEASHOOTER) triplePeashooter((TriplePeashooter) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.CACTUS) cactus((Cactus) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.PUFFSHROOM) puffshroom((Puffshroom) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.PEASHOOTER) peashooter((Peashooter) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.SNOW_PEASHOOTER) snowPeashooter((SnowPeashooter) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.WATERMELON_PULT) watermelonPult((WatermelonPult) plant, zombie);
-        else if (plant.type == GameEngine.SeedSlot.CABBAGE_PULT) cabbagePult((CabbagePult) plant, zombie);
+    public static void check(Plant plant, GameObject obj) {
+        if (plant.type == GameEngine.SeedSlot.TRIPLE_PEASHOOTER) triplePeashooter((TriplePeashooter) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.CACTUS) cactus((Cactus) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.PUFFSHROOM) puffshroom((Puffshroom) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.PEASHOOTER) peashooter((Peashooter) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.SNOW_PEASHOOTER) snowPeashooter((SnowPeashooter) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.WATERMELON_PULT) watermelonPult((WatermelonPult) plant, obj);
+        else if (plant.type == GameEngine.SeedSlot.CABBAGE_PULT) cabbagePult((CabbagePult) plant, obj);
     }
-    private static void triplePeashooter(TriplePeashooter plant, Zombie zombie) {
+    private static void triplePeashooter(TriplePeashooter plant, GameObject obj) {
         {
-            if (zombie.line - 1 == plant.line || zombie.line + 1 == plant.line || zombie.line == plant.line) {
+            if (obj.line - 1 == plant.line || obj.line + 1 == plant.line || obj.line == plant.line) {
                 plant.upLinePea = new Pea(plant.hitbox.x, plant.hitbox.y - 150, plant.level, null);
                 plant.downLinePea = new Pea(plant.hitbox.x, plant.hitbox.y + 150, plant.level, null);
                 plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level, null);
@@ -37,8 +36,8 @@ public class PeaCreator {
         }
     }
 
-    private static void cactus(Cactus plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
+    private static void cactus(Cactus plant, GameObject obj) {
+        if (obj.line == plant.line) {
             plant.ammo = new Needle(plant.hitbox.x, plant.hitbox.y, plant.level);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
@@ -46,8 +45,8 @@ public class PeaCreator {
         }
     }
 
-    private static void peashooter(Peashooter plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
+    private static void peashooter(Peashooter plant, GameObject obj) {
+        if (obj.line == plant.line) {
             plant.ammo = new Pea(plant.hitbox.x, plant.hitbox.y, plant.level, null);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
@@ -55,8 +54,8 @@ public class PeaCreator {
         }
     }
 
-    private static void snowPeashooter(SnowPeashooter plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
+    private static void snowPeashooter(SnowPeashooter plant, GameObject obj) {
+        if (obj.line == plant.line) {
             plant.ammo = new SnowPea(plant.hitbox.x, plant.hitbox.y, plant.level);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
@@ -64,9 +63,9 @@ public class PeaCreator {
         }
     }
 
-    private static void puffshroom(Puffshroom plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
-            if (Math.abs(plant.hitbox.x - zombie.hitbox.x) < 450) {
+    private static void puffshroom(Puffshroom plant, GameObject obj) {
+        if (obj.line == plant.line) {
+            if (Math.abs(plant.hitbox.x - obj.hitbox.x) < 450) {
                 plant.ammo = new Puff(plant.hitbox.x, plant.hitbox.y, plant.level);
                 plant.reloadCooldown = PEA_RELOAD_TIME;
                 peaList.add(plant.ammo);
@@ -75,8 +74,8 @@ public class PeaCreator {
         }
     }
 
-    private static void watermelonPult(WatermelonPult plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
+    private static void watermelonPult(WatermelonPult plant, GameObject obj) {
+        if (obj.line == plant.line) {
             plant.ammo = new Watermelon(plant.hitbox.x, plant.hitbox.y, plant.level);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);
@@ -84,8 +83,8 @@ public class PeaCreator {
         }
     }
 
-    private static void cabbagePult(CabbagePult plant, Zombie zombie) {
-        if (zombie.line == plant.line) {
+    private static void cabbagePult(CabbagePult plant, GameObject obj) {
+        if (obj.line == plant.line) {
             plant.ammo = new Cabbage(plant.hitbox.x, plant.hitbox.y, plant.level);
             plant.reloadCooldown = PEA_RELOAD_TIME;
             peaList.add(plant.ammo);

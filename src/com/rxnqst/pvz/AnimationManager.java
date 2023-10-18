@@ -10,30 +10,18 @@ import java.util.HashMap;
 
 import static com.rxnqst.pvz.GameEngine.*;
 
-public class AnimationManager implements Runnable {
+public class AnimationManager {
     public static HashMap<AtlasName, BufferedImage> animationAtlases = new HashMap<>();
-
-    @Override
-    public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
-            while (isGameRunning) {
-                for (int z = 0; z < zombieList.size(); z++) {
-                    zombieList.get(z).frameIndex = (++zombieList.get(z).frameIndex) % 6;
-                }
-                for (int p = 0; p < plantList.size(); p++) {
-                    plantList.get(p).frameIndex = (++plantList.get(p).frameIndex) % 6;
-                }
-                try {Thread.sleep(120);
-                } catch (InterruptedException e) {}
-            }
-        }
-    }
 
     public enum AtlasName {
         ZOMBIE_BASIC_WALK, ZOMBIE_CONE_WALK,
         ZOMBIE_CONE_EAT, ZOMBIE_BUCKET_WALK,
         ZOMBIE_BUCKET_EAT, ZOMBIE_DEAD_WALK,
-        ZOMBIE_BASIC_EAT
+        ZOMBIE_BASIC_EAT,
+
+        POTATO_BOOM_EFFECT,
+        CHERRY_ACTIVATION_EFFECT,
+        CHERRY_BOOM_EFFECT
     }
     public static void loadAnimationAtlases() throws IOException {
         String aFolder = "assets/animations/";
@@ -44,6 +32,10 @@ public class AnimationManager implements Runnable {
         animationAtlases.put(AtlasName.ZOMBIE_BUCKET_WALK, ImageIO.read(new File(aFolder +"zombie/zombie bucket walk.png")));
         animationAtlases.put(AtlasName.ZOMBIE_BUCKET_EAT, ImageIO.read(new File(aFolder +"zombie/zombie bucket eat.png")));
         animationAtlases.put(AtlasName.ZOMBIE_DEAD_WALK, ImageIO.read(new File(aFolder +"zombie/zombie dead.png")));
+
+        animationAtlases.put(AtlasName.POTATO_BOOM_EFFECT, ImageIO.read(new File(aFolder +"effects/potatoBoom.png")));
+        animationAtlases.put(AtlasName.CHERRY_ACTIVATION_EFFECT, ImageIO.read(new File(aFolder +"effects/cherryActivation.png")));
+        animationAtlases.put(AtlasName.CHERRY_BOOM_EFFECT, ImageIO.read(new File(aFolder +"effects/cherryBoom.png")));
     }
     public static BufferedImage getTexture(AtlasName atlasName) {
         return animationAtlases.get(atlasName);

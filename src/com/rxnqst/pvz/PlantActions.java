@@ -1,5 +1,7 @@
 package com.rxnqst.pvz;
 
+import com.rxnqst.pvz.effects.CherryActivationEffect;
+import com.rxnqst.pvz.effects.PotatoBoomEffect;
 import com.rxnqst.pvz.peas.*;
 import com.rxnqst.pvz.plants.boomFamily.CherryBomb;
 import com.rxnqst.pvz.plants.boomFamily.IceMushroom;
@@ -12,13 +14,13 @@ import com.rxnqst.pvz.zombies.Zombie;
 
 import java.awt.*;
 
-import static com.rxnqst.pvz.GameEngine.peaList;
-import static com.rxnqst.pvz.GameEngine.zombieList;
+import static com.rxnqst.pvz.GameEngine.*;
 import static com.rxnqst.pvz.utils.Utils.checkBoxesOverlap;
 
 public class PlantActions {
     public static void cherryBomb(CherryBomb plant) {
         Sound.playCherryBombBoomSound();
+        effectList.add(new CherryActivationEffect(plant.hitbox.x, plant.hitbox.y));
         for (Zombie zombie : zombieList) {
             if (zombie.line - 1 == plant.line) {
                 if (zombie.hitbox.x / 150 == plant.column
@@ -54,6 +56,7 @@ public class PlantActions {
             }
             if (isDetonated) {
                 Sound.playPotatoMineBoomSound();
+                effectList.add(new PotatoBoomEffect(plant.hitbox.x, plant.hitbox.y));
                 for (int z = 0; z < zombieList.size(); ++z) {
                     Zombie zombie = zombieList.get(z);
                     if (checkBoxesOverlap(zombie.hitbox, plant.boomArea))

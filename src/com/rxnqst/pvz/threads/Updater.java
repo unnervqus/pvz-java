@@ -142,7 +142,9 @@ public class Updater implements Runnable {
         } else {
             if (keys[KeyEvent.VK_ESCAPE]) selectedObject = null;
             if (keys[KeyEvent.VK_Z] && !keysOnHold[KeyEvent.VK_Z]) {
-                zombieList.add(new BasicZombie(1700, 5));
+                zombieList.add(new BasicZombie(1700, 1));
+                zombieList.add(new ZombieConehead(1700, 2));
+                zombieList.add(new ZombieBuckethead(1700, 3));
             }
             if (isServer) if (keys[KeyEvent.VK_S]) stopGame();
             if (isServer) if (keys[KeyEvent.VK_B]) continueGame();
@@ -188,7 +190,7 @@ public class Updater implements Runnable {
         Iterator<Plant> plantIter = plantList.iterator();
         while (plantIter.hasNext()) {
             Plant plant = plantIter.next();
-            if(plant.hp <= 0) {
+            if (plant.hp <= 0) {
                 deadPlants.add(plant);
                 plantIter.remove();
             }
@@ -223,7 +225,7 @@ public class Updater implements Runnable {
                 }
                 zombie.isEating = false;
             }
-            if(plantList.size() == 0) zombie.isEating = false;
+            if (plantList.size() == 0) zombie.isEating = false;
             if (!zombie.isEating) {
                 if (zombie.freezeDelay > 0) --zombie.freezeDelay;
                 else {
@@ -257,7 +259,15 @@ public class Updater implements Runnable {
                     Zombie zombie = zombieList.get(z);
                     if (plant.canShoot && zombie.hitbox.x < 1850) {
                         if (plant.reloadCooldown == 0) {
-                            PeaCreator.createPea(plant, zombie);
+                            PeaCreator.check(plant, zombie);
+                        }
+                    }
+                }
+                for (int g = 0; g < graveList.size(); g++) {
+                    Grave grave = graveList.get(g);
+                    if (plant.canShoot) {
+                        if (plant.reloadCooldown == 0) {
+                            PeaCreator.check(plant, grave);
                         }
                     }
                 }
@@ -294,7 +304,15 @@ public class Updater implements Runnable {
                     }
                 }
             }
+            for (int g = 0; g < graveList.size(); g++) {
+                Grave grave = graveList.get(g);
+                if (checkBoxesOverlap(grave.hitbox, pea.hitbox)) {
+                    grave.hp -= pea.dmg;
+                    peaList.remove(pea);
+                }
+            }
             pea.hitbox.x += PEA_SPEED;
+            if (pea.hitbox.x > 2000) peaList.remove(pea);
         }
     }
 
@@ -326,6 +344,7 @@ public class Updater implements Runnable {
                         } else checkPlantClick();
                     } else {
                         checkZombieClick();
+                        checkGraveClick();
                     }
                 }
             }
@@ -344,20 +363,55 @@ public class Updater implements Runnable {
         }
     }
 
-    private void checkZombieClick() throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
-        for (int y = 0; y < 6; y++) {
-            if ((clickY - 100) / 150 == y) {
-                if (selectedObject.objClass.getField("COST").getInt(null) <= brainsAmount) {
-                    if (isServer) {
-                        Zombie zombie = (Zombie) selectedObject.objClass.getConstructors()[0].newInstance(2000, y);
-                        zombieList.add(zombie);
-                        serverZombieQueue.add(zombie);
-                    } else {
-                        clientZombieQueue.add((Zombie) selectedObject.objClass.getConstructors()[0].newInstance(2000, y));
+    private void checkGraveClick() {
+        if (selectedObject == GRAVE) {
+            for (int x = 0; x < 12; x++) {
+                for (int y = 0; y < 6; y++) {
+                    if (checkCollision(tiles[x][y], clickX, clickY)) {
+                        if(x < 9) {
+                            selectedObject = null;
+                            return;
+                        }
+                        for (int p = 0; p < plantList.size(); p++) {
+                            Plant plant = plantList.get(p);
+                            if(plant.line == y && plant.column == x) {
+                               selectedObject = null;
+                               return;
+                            }
+                        }
+                        for (int g = 0; g < graveList.size(); g++) {
+                            Grave grave = graveList.get(g);
+                            if(grave.line == y && grave.column == x) {
+                                selectedObject = null;
+                                return;
+                            }
+                        }
+                        graveList.add(new Grave(x, y));
+                        brainsAmount -= 500;
+                        selectedObject = null;
+                        return;
                     }
-                    brainsAmount -= selectedObject.objClass.getField("COST").getInt(null);
-                    selectedObject = null;
-                    break;
+                }
+            }
+        }
+    }
+
+    private void checkZombieClick() throws InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchFieldException {
+        if (selectedObject != GRAVE) {
+            for (int y = 0; y < 6; y++) {
+                if ((clickY - 100) / 150 == y) {
+                    if (selectedObject.objClass.getField("COST").getInt(null) <= brainsAmount) {
+                        if (isServer) {
+                            Zombie zombie = (Zombie) selectedObject.objClass.getConstructors()[0].newInstance(2000, y);
+                            zombieList.add(zombie);
+                            serverZombieQueue.add(zombie);
+                        } else {
+                            clientZombieQueue.add((Zombie) selectedObject.objClass.getConstructors()[0].newInstance(2000, y));
+                        }
+                        brainsAmount -= selectedObject.objClass.getField("COST").getInt(null);
+                        selectedObject = null;
+                        break;
+                    }
                 }
             }
         }
@@ -370,6 +424,13 @@ public class Updater implements Runnable {
         for (Integer x = 0; x < 12; x++) {
             for (int y = 0; y < 6; y++) {
                 if (checkCollision(tiles[x][y], clickX, clickY)) {
+                    for (int g = 0; g < graveList.size(); g++) {
+                        Grave grave = graveList.get(g);
+                        if (grave.column == x && grave.line == y) {
+                            selectedObject = null;
+                            return;
+                        }
+                    }
                     for (Plant plant : plantList) {
                         if (plant.column == x && plant.line == y) {
                             if (plant.type == PUMPKIN) targetPumpkin = plant;
@@ -464,7 +525,7 @@ public class Updater implements Runnable {
                 }
             }
         }
-        if(isPlantDugOut) {
+        if (isPlantDugOut) {
             for (Plant plant : plantList) {
                 if (plant.column == lineX && plant.line == lineY) {
                     deadPlants.add(plant);
