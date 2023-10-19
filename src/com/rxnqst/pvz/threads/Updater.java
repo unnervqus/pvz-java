@@ -1,6 +1,7 @@
 package com.rxnqst.pvz.threads;
 
 import com.rxnqst.pvz.*;
+import com.rxnqst.pvz.effects.ZomboniBoom;
 import com.rxnqst.pvz.peas.Pea;
 import com.rxnqst.pvz.peas.SnowPea;
 import com.rxnqst.pvz.peas.Needle;
@@ -142,9 +143,10 @@ public class Updater implements Runnable {
         } else {
             if (keys[KeyEvent.VK_ESCAPE]) selectedObject = null;
             if (keys[KeyEvent.VK_Z] && !keysOnHold[KeyEvent.VK_Z]) {
-                zombieList.add(new BasicZombie(1700, 1));
-                zombieList.add(new ZombieConehead(1700, 2));
-                zombieList.add(new ZombieBuckethead(1700, 3));
+                zombieList.add(new Zomboni(1700, 1));
+                zombieList.add(new BalloonZombie(1700, 2));
+                zombieList.add(new ZombieJackbox(1700, 3));
+                zombieList.add(new ZombieDoor(1700, 4));
             }
             if (isServer) if (keys[KeyEvent.VK_S]) stopGame();
             if (isServer) if (keys[KeyEvent.VK_B]) continueGame();
@@ -238,6 +240,9 @@ public class Updater implements Runnable {
             Zombie zombie = zombieList.get(i);
             if (zombie.type == ImgName.ZOMBIE_JACKBOX) ZombieActions.jackInTheBox((ZombieJackbox) zombie);
             if (zombie.hp <= 0) {
+                if (zombie.type == ImgName.ZOMBONI) {
+                    effectList.add(new ZomboniBoom(zombie.hitbox.x, zombie.hitbox.y));
+                }
                 zombieKilled += 1;
                 deadZombies.add(zombie);
                 zombieList.remove(zombie);
@@ -308,8 +313,8 @@ public class Updater implements Runnable {
                 Grave grave = graveList.get(g);
                 if (checkBoxesOverlap(grave.hitbox, pea.hitbox)) {
                     grave.hp -= pea.dmg;
-                    if(grave.hp <= 0) {
-                        if(isMultiplayerOn) deadGraves.add(grave);
+                    if (grave.hp <= 0) {
+                        if (isMultiplayerOn) deadGraves.add(grave);
                         graveList.remove(grave);
                     }
                     peaList.remove(pea);
@@ -372,27 +377,27 @@ public class Updater implements Runnable {
             for (int x = 0; x < 12; x++) {
                 for (int y = 0; y < 6; y++) {
                     if (checkCollision(tiles[x][y], clickX, clickY)) {
-                        if(x < 9) {
+                        if (x < 9) {
                             selectedObject = null;
                             return;
                         }
                         for (int p = 0; p < plantList.size(); p++) {
                             Plant plant = plantList.get(p);
-                            if(plant.line == y && plant.column == x) {
-                               selectedObject = null;
-                               return;
+                            if (plant.line == y && plant.column == x) {
+                                selectedObject = null;
+                                return;
                             }
                         }
                         for (int g = 0; g < graveList.size(); g++) {
                             Grave grave = graveList.get(g);
-                            if(grave.line == y && grave.column == x) {
+                            if (grave.line == y && grave.column == x) {
                                 selectedObject = null;
                                 return;
                             }
                         }
                         Grave grave = new Grave(x, y);
-                        if(isMultiplayerOn) {
-                            if(isServer) {
+                        if (isMultiplayerOn) {
+                            if (isServer) {
                                 serverGraveQueue.add(grave);
                                 //do nothing
                             } else {
@@ -406,20 +411,20 @@ public class Updater implements Runnable {
                     }
                 }
             }
-        } else if(selectedObject == FLAG) {
+        } else if (selectedObject == FLAG) {
             for (int g = 0; g < graveList.size(); g++) {
                 Grave grave = graveList.get(g);
                 int r = randomizer.nextInt(0, 5);
                 Zombie zombie = null;
                 switch (r) {
                     //TODO: WTF, WHY DO I SPAWN THEY IN POSX AND LINE
-                    case 0 -> zombie = new BasicZombie(grave.column*150, grave.line);
-                    case 1 -> zombie = new ZombieConehead(grave.column*150, grave.line);
-                    case 2 -> zombie = new ZombieBuckethead(grave.column*150, grave.line);
-                    case 3 -> zombie = new ZombieImp(grave.column*150, grave.line);
-                    case 4 -> zombie = new ZombieDoor(grave.column*150, grave.line);
+                    case 0 -> zombie = new BasicZombie(grave.column * 150, grave.line);
+                    case 1 -> zombie = new ZombieConehead(grave.column * 150, grave.line);
+                    case 2 -> zombie = new ZombieBuckethead(grave.column * 150, grave.line);
+                    case 3 -> zombie = new ZombieImp(grave.column * 150, grave.line);
+                    case 4 -> zombie = new ZombieDoor(grave.column * 150, grave.line);
                 }
-                if(isMultiplayerOn) {
+                if (isMultiplayerOn) {
                     if (isServer) {
                         zombieList.add(zombie);
                         serverZombieQueue.add(zombie);

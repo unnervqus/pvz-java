@@ -10,9 +10,6 @@ import com.rxnqst.pvz.plants.boomFamily.PotatoMine;
 import com.rxnqst.pvz.plants.helpFamily.SpikeRock;
 import com.rxnqst.pvz.plants.helpFamily.SpikeWeed;
 import com.rxnqst.pvz.plants.helpFamily.TorchWood;
-import com.rxnqst.pvz.zombies.Zombie;
-
-import java.awt.*;
 
 import static com.rxnqst.pvz.GameEngine.*;
 import static com.rxnqst.pvz.utils.Utils.checkBoxesOverlap;
@@ -21,22 +18,9 @@ public class PlantActions {
     public static void cherryBomb(CherryBomb plant) {
         Sound.playCherryBombBoomSound();
         effectList.add(new CherryActivationEffect(plant.hitbox.x, plant.hitbox.y));
-        for (Zombie zombie : zombieList) {
-            if (zombie.line - 1 == plant.line) {
-                if (zombie.hitbox.x / 150 == plant.column
-                        || zombie.hitbox.x / 150 - 1 == plant.column
-                        || zombie.hitbox.x / 150 + 1 == plant.column
-                ) zombie.hp -= 1500;
-            } else if (zombie.line == plant.line) {
-                if (zombie.hitbox.x / 150 == plant.column
-                        || zombie.hitbox.x / 150 - 1 == plant.column
-                        || zombie.hitbox.x / 150 + 1 == plant.column
-                ) zombie.hp -= 1500;
-            } else if (zombie.line + 1 == plant.line) {
-                if (zombie.hitbox.x / 150 == plant.column
-                        || zombie.hitbox.x / 150 - 1 == plant.column
-                        || zombie.hitbox.x / 150 + 1 == plant.column
-                ) zombie.hp -= 1500;
+        for (int z = 0; z < zombieList.size(); ++z) {
+            if(checkBoxesOverlap(zombieList.get(z).hitbox, plant.boomArea)) {
+                zombieList.get(z).hp -= 1500;
             }
         }
         plant.hp = 0;
@@ -48,8 +32,7 @@ public class PlantActions {
         } else {
             boolean isDetonated = false;
             for (int z = 0; z < zombieList.size(); ++z) {
-                Zombie zombie = zombieList.get(z);
-                if (checkBoxesOverlap(zombie.hitbox, plant.hitbox)) {
+                if (checkBoxesOverlap(zombieList.get(z).hitbox, plant.hitbox)) {
                     isDetonated = true;
                     break;
                 }
@@ -57,40 +40,30 @@ public class PlantActions {
             if (isDetonated) {
                 Sound.playPotatoMineBoomSound();
                 effectList.add(new PotatoBoomEffect(plant.hitbox.x, plant.hitbox.y));
-                for (int z = 0; z < zombieList.size(); ++z) {
-                    Zombie zombie = zombieList.get(z);
-                    if (checkBoxesOverlap(zombie.hitbox, plant.boomArea))
-                        zombie.hp -= 1500;
-                }
+                for (int z = 0; z < zombieList.size(); ++z)
+                    if (checkBoxesOverlap(zombieList.get(z).hitbox, plant.boomArea))
+                        zombieList.get(z).hp -= 1500;
                 plant.hp = 0;
             }
         }
     }
-
     public static void iceMushroom(IceMushroom plant) {
         for (int z = 0; z < zombieList.size(); ++z) {
-            Zombie zombie = zombieList.get(z);
-            zombie.freezeDelay = plant.freezeTime;
+            zombieList.get(z).freezeDelay = plant.freezeTime;
         }
         plant.hp = 0;
     }
-
     public static void jalapeno(Jalapeno plant) {
-        for (int z = 0; z < zombieList.size(); ++z) {
-            Zombie zombie = zombieList.get(z);
-            if(zombie.line == plant.line) {
-                zombie.hp -= 1500;
-            }
-        }
+        for (int z = 0; z < zombieList.size(); ++z)
+            if(zombieList.get(z).line == plant.line)
+                zombieList.get(z).hp -= 1500;
         plant.hp = 0;
     }
-
     public static void spikeRock(SpikeRock plant) {
         int zombiesDamaged = 0;
         for (int z = 0; z < zombieList.size(); ++z) {
-            Zombie zombie = zombieList.get(z);
-            if (checkBoxesOverlap(zombie.hitbox, plant.hitbox)) {
-                zombie.hp -= plant.dmg;
+            if (checkBoxesOverlap(zombieList.get(z).hitbox, plant.hitbox)) {
+                zombieList.get(z).hp -= plant.dmg;
                 ++zombiesDamaged;
                 if(zombiesDamaged == plant.maxZombie) break;
             }
@@ -100,9 +73,8 @@ public class PlantActions {
     public static void spikeWeed(SpikeWeed plant) {
         int zombiesDamaged = 0;
         for (int z = 0; z < zombieList.size(); ++z) {
-            Zombie zombie = zombieList.get(z);
-            if (checkBoxesOverlap(zombie.hitbox, plant.hitbox)) {
-                zombie.hp -= plant.dmg;
+            if (checkBoxesOverlap(zombieList.get(z).hitbox, plant.hitbox)) {
+                zombieList.get(z).hp -= plant.dmg;
                 ++zombiesDamaged;
                 if(zombiesDamaged == plant.maxZombie) break;
             }

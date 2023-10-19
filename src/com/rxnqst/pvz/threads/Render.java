@@ -97,7 +97,7 @@ public class Render implements Runnable {
                     drawTop(g2D);
                     drawSun(g2D);
                     drawMouse(g2D);
-                    //drawHitboxes(g2D);
+                    drawHitboxes(g2D);
                 }
                 g2D.dispose();
                 GameFrame.gamePanel.setScene(newScene);
@@ -141,6 +141,12 @@ public class Render implements Runnable {
                         ((PotatoMine) plant).boomArea.y,
                         ((PotatoMine) plant).boomArea.width,
                         ((PotatoMine) plant).boomArea.height);
+            if (plant instanceof CherryBomb)
+                g2D.drawRect(
+                        ((CherryBomb) plant).boomArea.x,
+                        ((CherryBomb) plant).boomArea.y,
+                        ((CherryBomb) plant).boomArea.width,
+                        ((CherryBomb) plant).boomArea.height);
         }
         g2D.setColor(Color.WHITE);
         for (int z = 0; z < zombieList.size(); z++) {
@@ -345,7 +351,9 @@ public class Render implements Runnable {
             Point frameSizeEat = null;
             Point frameSizeWalk = null;
             BufferedImage image = null;
-            if (zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead) {
+            if (zombie instanceof BasicZombie || zombie instanceof ZombieConehead || zombie instanceof ZombieBuckethead
+                    || zombie instanceof Zomboni || zombie instanceof ZombieJackbox || zombie instanceof ZombieDoor
+                    || zombie instanceof BalloonZombie) {
                 frameSizeEat = (Point) zombie.getClass().getField("frameSizeEat").get(null);
                 frameSizeWalk = (Point) zombie.getClass().getField("frameSizeWalk").get(null);
             }
@@ -407,14 +415,12 @@ public class Render implements Runnable {
             }
         }
     }
-
     private void drawSun(Graphics2D g2D) {
         for (int i = 0; i < sunList.size(); i++) {
             Sun sun = sunList.get(i);
             g2D.drawImage(SUN, sun.hitbox.x, sun.hitbox.y, null);
         }
     }
-
     private void drawBottom(Graphics2D g2D) {
         g2D.drawImage(BG, 0, 0, null);
         g2D.drawImage(FIELD, 0, 90, null);
