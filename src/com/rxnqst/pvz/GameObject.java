@@ -15,5 +15,6 @@ public class GameObject implements Serializable {
     public GameObject(int line, int column, int width, int height, int hp) {
         hitbox = new Rect(column * 150, line * 150 + 90, width, height);
         this.hp = hp;
+
     }
 }

@@ -3,11 +3,11 @@ package com.rxnqst.pvz;
 import com.rxnqst.pvz.utils.Rect;
 
 public class ChosenSeed {
-    public GameEngine.SeedSlot seedSlot;
+    public GameObjectType type;
     public Rect box;
 
-    public ChosenSeed(GameEngine.SeedSlot seedSlot, Rect box) {
-        this.seedSlot = seedSlot;
+    public ChosenSeed(GameObjectType type, Rect box) {
+        this.type = type;
         this.box = box;
     }
 }

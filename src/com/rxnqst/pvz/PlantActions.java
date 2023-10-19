@@ -26,9 +26,9 @@ public class PlantActions {
         plant.hp = 0;
     }
     public static void potatoMine(PotatoMine plant) {
-        if(plant.type == GameEngine.SeedSlot.POTATO_MINE_UNREADY) {
+        if(plant.type == GameObjectType._PotatoMine_unready) {
             if (plant.armoringTime > 0) --plant.armoringTime;
-            if (plant.armoringTime == 0) plant.type = GameEngine.SeedSlot.POTATO_MINE;
+            if (plant.armoringTime == 0) plant.type = GameObjectType.PotatoMine;
         } else {
             boolean isDetonated = false;
             for (int z = 0; z < zombieList.size(); ++z) {
@@ -87,9 +87,9 @@ public class PlantActions {
                 if (checkBoxesOverlap(pea.hitbox, plant.hitbox) && !pea.isFired) {
                     pea.dmg += plant.extraDmg;
                     if(pea instanceof Needle)
-                        pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_NEEDLE);
+                        pea.image = ImageManager.getTexture(GameObjectType.FireNeedle);
                     else
-                        pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_PEA);
+                        pea.image = ImageManager.getTexture(GameObjectType.FirePea);
                     pea.isFired = true;
                 }
             }

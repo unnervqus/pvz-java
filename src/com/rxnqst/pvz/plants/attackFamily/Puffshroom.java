@@ -1,20 +1,17 @@
 package com.rxnqst.pvz.plants.attackFamily;
 
-import com.rxnqst.pvz.GameEngine;
+import com.rxnqst.pvz.GameObjectType;
 import com.rxnqst.pvz.plants.Plant;
 import com.rxnqst.pvz.utils.Rect;
 
-import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+import static com.rxnqst.pvz.GameEngine.pvzContainers;
 
 public class Puffshroom extends Plant {
-    public static final int RELOAD_TIME = 400 * SEED_RELOAD_MODIFIER;
-    public static final int COST = 0;
-    public static int RELOAD = RELOAD_TIME;
+    public GameObjectType type = GameObjectType.Puffshroom;
+    public static int RELOAD = pvzContainers.get(GameObjectType.Puffshroom).RELOAD_TIME;
     public Puffshroom(int posX, int posY) {
-        super(10, posX, posY, GameEngine.SeedSlot.PUFFSHROOM, true);
+        super(10, posX, posY, true);
         hitbox = new Rect(column * 150+55, line * 150+145 , 35, 34);
-        RELOAD = RELOAD_TIME;
-        GameEngine.sunAmount -= COST;
     }
     @Override
     public void levelUP() {

@@ -9,13 +9,13 @@ import static com.rxnqst.pvz.GameSettings.PEA_RELOAD_TIME;
 
 public class PeaCreator {
     public static void check(Plant plant, GameObject obj) {
-        if (plant.type == GameEngine.SeedSlot.TRIPLE_PEASHOOTER) triplePeashooter((TriplePeashooter) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.CACTUS) cactus((Cactus) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.PUFFSHROOM) puffshroom((Puffshroom) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.PEASHOOTER) peashooter((Peashooter) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.SNOW_PEASHOOTER) snowPeashooter((SnowPeashooter) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.WATERMELON_PULT) watermelonPult((WatermelonPult) plant, obj);
-        else if (plant.type == GameEngine.SeedSlot.CABBAGE_PULT) cabbagePult((CabbagePult) plant, obj);
+        if (plant.type == GameObjectType.TriplePeashooter) triplePeashooter((TriplePeashooter) plant, obj);
+        else if (plant.type == GameObjectType.Cactus) cactus((Cactus) plant, obj);
+        else if (plant.type == GameObjectType.Puffshroom) puffshroom((Puffshroom) plant, obj);
+        else if (plant.type == GameObjectType.Peashooter) peashooter((Peashooter) plant, obj);
+        else if (plant.type == GameObjectType.SnowPeashooter) snowPeashooter((SnowPeashooter) plant, obj);
+        else if (plant.type == GameObjectType.WatermelonPult) watermelonPult((WatermelonPult) plant, obj);
+        else if (plant.type == GameObjectType.CabbagePult) cabbagePult((CabbagePult) plant, obj);
     }
     private static void triplePeashooter(TriplePeashooter plant, GameObject obj) {
         {

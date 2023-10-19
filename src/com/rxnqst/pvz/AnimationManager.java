@@ -1,18 +1,13 @@
 package com.rxnqst.pvz;
 
-import com.rxnqst.pvz.zombies.Zombie;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static com.rxnqst.pvz.GameEngine.*;
-
 public class AnimationManager {
     public static HashMap<AtlasName, BufferedImage> animationAtlases = new HashMap<>();
-
     public enum AtlasName {
         ZOMBIE_BASIC_WALK, ZOMBIE_BASIC_EAT,
         ZOMBIE_CONE_WALK, ZOMBIE_CONE_EAT,

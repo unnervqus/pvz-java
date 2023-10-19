@@ -1,5 +1,6 @@
 package com.rxnqst.pvz.net;
 
+import com.rxnqst.pvz.GameObjectType;
 import com.rxnqst.pvz.GameSettings;
 import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.peas.*;
@@ -138,15 +139,15 @@ public class Client {
             Pea pea = (Pea) input.readObject();
             if(pea.isFired) {
                 if(!(pea instanceof Cabbage) && !(pea instanceof Watermelon) && !(pea instanceof Puff)) {
-                    if(pea instanceof Needle) pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_NEEDLE);
-                    else pea.image = ImageManager.getTexture(ImageManager.ImgName.FIRE_PEA);
+                    if(pea instanceof Needle) pea.image = ImageManager.getTexture(GameObjectType.FireNeedle);
+                    else pea.image = ImageManager.getTexture(GameObjectType.FirePea);
                 }
             } else {
-                if(pea instanceof SnowPea) pea.image = ImageManager.getTexture(ImageManager.ImgName.SNOW_PEA);
-                if(pea instanceof Cabbage) pea.image = ImageManager.getTexture(ImageManager.ImgName.CABBAGE);
-                if(pea instanceof Watermelon) pea.image = ImageManager.getTexture(ImageManager.ImgName.WATERMELON);
-                if(pea instanceof Puff) pea.image = ImageManager.getTexture(ImageManager.ImgName.PUFF);
-                else pea.image = ImageManager.getTexture(ImageManager.ImgName.PEA);
+                if(pea instanceof SnowPea) pea.image = ImageManager.getTexture(GameObjectType.SnowPea);
+                if(pea instanceof Cabbage) pea.image = ImageManager.getTexture(GameObjectType.Cabbage);
+                if(pea instanceof Watermelon) pea.image = ImageManager.getTexture(GameObjectType.Watermelon);
+                if(pea instanceof Puff) pea.image = ImageManager.getTexture(GameObjectType.Puff);
+                else pea.image = ImageManager.getTexture(GameObjectType.Pea);
             }
             peaList.add(pea);
         }

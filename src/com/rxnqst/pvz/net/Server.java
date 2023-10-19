@@ -1,5 +1,6 @@
 package com.rxnqst.pvz.net;
 
+import com.rxnqst.pvz.GameObjectType;
 import com.rxnqst.pvz.GameSettings;
 import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.plants.Plant;
@@ -68,12 +69,12 @@ public class Server {
             int r = randomizer.nextInt(0, 2);
             switch (r) {
                 case 0 -> {
-                    grave.image = ImageManager.getTexture(ImageManager.ImgName.GRAVE_1);
+                    grave.image = ImageManager.getTexture(GameObjectType.ZGrave1);
                     grave.hitbox.width = 106;
                     grave.hitbox.height = 122;
                 }
                 case 1 -> {
-                    grave.image = ImageManager.getTexture(ImageManager.ImgName.GRAVE_2);
+                    grave.image = ImageManager.getTexture(GameObjectType.ZGrave2);
                     grave.hitbox.width = 92;
                     grave.hitbox.height = 106;
                     grave.hitbox.x += 10;
@@ -134,8 +135,7 @@ public class Server {
             if(zombie instanceof Zomboni) realZombie = new Zomboni(zombie);
             if(zombie instanceof ZombieJackbox) realZombie = new ZombieJackbox(zombie);
             zombieList.add(realZombie);
-            SeedSlot zombieType = SeedSlot.valueOf(zombie.type.toString());
-            brainsAmount -= zombieType.objClass.getField("COST").getInt(null);
+            brainsAmount -= pvzContainers.get(realZombie.type).COST;
             serverZombieQueue.add(zombie);
         }
     }

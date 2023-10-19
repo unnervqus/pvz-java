@@ -1,5 +1,6 @@
 package com.rxnqst.pvz.peas;
 
+import com.rxnqst.pvz.GameObjectType;
 import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.utils.Rect;
 
@@ -18,6 +19,6 @@ public class Pea implements Serializable {
         this.dmg = 25 + (level-1) * 15;
         hitbox = new Rect(posX, posY, 20, 20);
         if(image != null) this.image = image;
-        else this.image = ImageManager.getTexture(ImageManager.ImgName.PEA);
+        else this.image = ImageManager.getTexture(GameObjectType.Pea);
     }
 }

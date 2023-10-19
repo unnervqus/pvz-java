@@ -1,5 +1,6 @@
 package com.rxnqst.pvz.peas;
 
+import com.rxnqst.pvz.GameObjectType;
 import com.rxnqst.pvz.ImageManager;
 import com.rxnqst.pvz.zombies.Zombie;
 
@@ -8,7 +9,7 @@ public class Needle extends Pea {
     public final int maxZombieHits;
     public Zombie[] damagedZombies;
     public Needle(int posX, int posY, int level) {
-        super(posX, posY+10, level, ImageManager.getTexture(ImageManager.ImgName.NEEDLE));
+        super(posX, posY+10, level, ImageManager.getTexture(GameObjectType.Needle));
         this.maxZombieHits = level+2;
         damagedZombies = new Zombie[maxZombieHits];
         dmg = 30 + (level-1)*15;
