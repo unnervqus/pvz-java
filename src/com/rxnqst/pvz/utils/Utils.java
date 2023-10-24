@@ -1,5 +1,6 @@
 package com.rxnqst.pvz.utils;
 
+
 public class Utils {
     public static boolean checkCollision(Rect rect, int x, int y) {
         return checkInterval(rect.y, rect.height, y) && checkInterval(rect.x, rect.width, x);
@@ -14,4 +15,8 @@ public class Utils {
         return true;
     }
 
+    public static boolean isLineIntersectBox(Rect rect, Line line) {
+
+        return false;
+    }
 }
