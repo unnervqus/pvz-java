@@ -54,7 +54,7 @@ public class ImageManager implements Serializable {
             textures.put(TallWallnut, ImageIO.read(new File("assets/plants/tall_wallnut.png")));
 
             textures.put(SeedsCabbagePult, ImageIO.read(new File("assets/seeds/cabbage_pult seeds.png")));
-            textures.put(SeedsCherryBoom, ImageIO.read(new File("assets/seeds/cherry_bomb seeds.png")));
+            textures.put(SeedsCherryBomb, ImageIO.read(new File("assets/seeds/cherry_bomb seeds.png")));
             textures.put(SeedsPeashooter, ImageIO.read(new File("assets/seeds/peashooter seeds.png")));
             textures.put(SeedsPotatoMine, ImageIO.read(new File("assets/seeds/potato_mine seeds.png")));
             textures.put(SeedsPuffshroom, ImageIO.read(new File("assets/seeds/puffshroom seeds.png")));
@@ -81,6 +81,7 @@ public class ImageManager implements Serializable {
             textures.put(ZZomboni, ImageIO.read(new File("assets/zombie/zomboni.png")));
             textures.put(ZBalloon, ImageIO.read(new File("assets/zombie/zombie balloon.png")));
             textures.put(ZYeti, ImageIO.read(new File("assets/zombie/yeti.png")));
+            textures.put(ZGrave, ImageIO.read(new File("assets/zombie/grave_1.png")));
             textures.put(ZGrave1, ImageIO.read(new File("assets/zombie/grave_1.png")));
             textures.put(ZGrave2, ImageIO.read(new File("assets/zombie/grave_2.png")));
             textures.put(ZFlag, ImageIO.read(new File("assets/zombie/flag.png")));

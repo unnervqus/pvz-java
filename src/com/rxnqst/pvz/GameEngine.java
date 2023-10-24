@@ -19,8 +19,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
-import static com.rxnqst.pvz.GameSettings.BRAIN_BONUS_COOLDOWN;
-import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+import static com.rxnqst.pvz.GameSettings.*;
 import static com.rxnqst.pvz.ImageManager.getTexture;
 import static com.rxnqst.pvz.AnimationManager.AtlasName;
 
@@ -41,8 +40,8 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static boolean isGameOver = false;
     public static boolean drawHP = false;
     public static int fogPosition = 1500;
-    public static int sunAmount = 50;
-    public static int brainsAmount = 50;
+    public static int sunAmount = SUN_AMOUNT_ON_START;
+    public static int brainsAmount = BRAINS_AMOUNT_ON_START;
     public static int brainBonus = 250;
     public static int brainCooldown = 0;
     public static int brainBonusCooldown = BRAIN_BONUS_COOLDOWN;
@@ -66,7 +65,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
                 null, 50, 125 * SEED_RELOAD_MODIFIER));
         pvzContainers.put(GameObjectType.Wallnut, new PvZContainer(
                 getTexture(GameObjectType.Wallnut),
-                null, 100, 200 * SEED_RELOAD_MODIFIER));
+                null, 50, 200 * SEED_RELOAD_MODIFIER));
         pvzContainers.put(GameObjectType.PotatoMine, new PvZContainer(
                 getTexture(GameObjectType.PotatoMine),
                 null, 25, 1000 * SEED_RELOAD_MODIFIER));
@@ -117,7 +116,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
                 getTexture(GameObjectType.ZBasic),
                 AnimationManager.getTexture(AtlasName.ZOMBIE_BASIC_EAT),
                 AnimationManager.getTexture(AtlasName.ZOMBIE_BASIC_WALK),
-                new Point(58, 94), new Point(62, 88), 100));
+                new Point(62, 88), new Point(58, 94), 100));
         pvzContainers.put(GameObjectType.ZConehead, new PvZContainer(
                 getTexture(GameObjectType.ZConehead),
                 AnimationManager.getTexture(AtlasName.ZOMBIE_CONE_EAT),
@@ -152,8 +151,8 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
                 new Point(74, 108), new Point(74, 108), 150));
         pvzContainers.put(GameObjectType.ZYeti, new PvZContainer(
                 getTexture(GameObjectType.ZYeti), 2500));
-        pvzContainers.put(GameObjectType.ZSeedsGrave, new PvZContainer(
-                getTexture(GameObjectType.ZSeedsGrave), 500));
+        pvzContainers.put(GameObjectType.ZGrave, new PvZContainer(
+                getTexture(GameObjectType.ZGrave), 500));
         pvzContainers.put(GameObjectType.ZFlag, new PvZContainer(
                 getTexture(GameObjectType.ZFlag), 1000));
     }
@@ -189,30 +188,30 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
     public static ArrayList<Grave> deadGraves = new ArrayList<>();
     // ! MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER MULTIPLAYER
 
-    public static GameObjectType selectedObject;
+    public static ChosenSeed selectedObject;
 
     public static void createGame() throws FileNotFoundException {
         loadConfigs();
         isGameRunning = true;
         // 16,14
-        menuSeedSlots.put(GameObjectType.Sunflower, new Rect(25, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.Peashooter, new Rect(105, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.Wallnut, new Rect(185, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.PotatoMine, new Rect(265, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.SnowPeashooter, new Rect(345, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.CherryBomb, new Rect(425, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.Puffshroom, new Rect(505, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.CabbagePult, new Rect(585, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.WatermelonPult, new Rect(665, 150, 64, 86));
-        menuSeedSlots.put(GameObjectType.TriplePeashooter, new Rect(25, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.Cactus, new Rect(105, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.IceMushroom, new Rect(185, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.Jalapeno, new Rect(265, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.Pumpkin, new Rect(345, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.SpikeWeed, new Rect(425, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.SpikeRock, new Rect(506, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.TallWallnut, new Rect(585, 250, 64, 86));
-        menuSeedSlots.put(GameObjectType.TorchWood, new Rect(665, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsSunflower, new Rect(25, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsPeashooter, new Rect(105, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsWallnut, new Rect(185, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsPotatoMine, new Rect(265, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsSnowPeashooter, new Rect(345, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsCherryBomb, new Rect(425, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsPuffshroom, new Rect(505, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsCabbagePult, new Rect(585, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsWatermelonPult, new Rect(665, 150, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsTriplePeashooter, new Rect(25, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsCactus, new Rect(105, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsIceMushroom, new Rect(185, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsJalapeno, new Rect(265, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsPumpkin, new Rect(345, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsSpikeWeed, new Rect(425, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsSpikeRock, new Rect(506, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsTallWallnut, new Rect(585, 250, 64, 86));
+        menuSeedSlots.put(GameObjectType.SeedsTorchWood, new Rect(665, 250, 64, 86));
         for (int x = 0; x < 12; x++) {
             for (int y = 0; y < 6; y++) {
                 tiles[x][y] = new Rect(150 * x, 90 + 150 * y, 150, 150);
@@ -237,17 +236,17 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
             drawPlantChoose = false;
             chosenSeeds.clear();
             // Fill seeds UI with zombies "seeds"
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZBasic, new Rect(93, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZConehead, new Rect(93 + 86, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZBuckethead, new Rect(93 + 86 * 2, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZDoor, new Rect(93 + 86 * 3, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZJackbox, new Rect(93 + 86 * 4, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZBalloon, new Rect(93 + 86 * 5, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZYeti, new Rect(93 + 86 * 6, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZImp, new Rect(93 + 86 * 7, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZZomboni, new Rect(93 + 86 * 8, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType._ZGrave, new Rect(93 + 86 * 9, 5, 64, 86)));
-            chosenSeeds.add(new ChosenSeed(GameObjectType.ZFlag, new Rect(93 + 86 * 10, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsBasic, new Rect(93, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsConehead, new Rect(93 + 86, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsBuckethead, new Rect(93 + 86 * 2, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsDoor, new Rect(93 + 86 * 3, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsJackbox, new Rect(93 + 86 * 4, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsBalloon, new Rect(93 + 86 * 5, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsYeti, new Rect(93 + 86 * 6, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsImp, new Rect(93 + 86 * 7, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsZomboni, new Rect(93 + 86 * 8, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsGrave, new Rect(93 + 86 * 9, 5, 64, 86)));
+            chosenSeeds.add(new ChosenSeed(GameObjectType.ZSeedsFlag, new Rect(93 + 86 * 10, 5, 64, 86)));
         }
         if(isMultiplayerOn) {
             try {
@@ -261,7 +260,7 @@ public class GameEngine implements KeyListener, MouseMotionListener, MouseListen
                 e.printStackTrace();
             }
         }
-        chosenSeeds.add(new ChosenSeed(GameObjectType.Shovel, new Rect(1050, 0, 100, 100)));
+        if(isPlantsGameMode) chosenSeeds.add(new ChosenSeed(GameObjectType.Shovel, new Rect(1050, 0, 100, 100)));
         Sound.playReadySetPlantSound();
         Sound.playBgMusic();
         if(!isMultiplayerOn) waveGenThread.start();

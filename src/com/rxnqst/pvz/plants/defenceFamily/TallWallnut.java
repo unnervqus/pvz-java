@@ -7,11 +7,11 @@ import com.rxnqst.pvz.utils.Rect;
 import static com.rxnqst.pvz.GameEngine.pvzContainers;
 
 public class TallWallnut extends Plant {
-    public GameObjectType type = GameObjectType.TallWallnut;
     public static int RELOAD = pvzContainers.get(GameObjectType.TallWallnut).RELOAD_TIME;
     public TallWallnut(int tileX, int tileY) {
         super(10000, tileX, tileY,  false);
         hitbox = new Rect(column * 150+65, line * 150+105, 62, 90);
+        type = GameObjectType.TallWallnut;
     }
     @Override
     public void levelUP() {

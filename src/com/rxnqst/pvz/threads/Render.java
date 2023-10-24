@@ -114,18 +114,12 @@ public class Render implements Runnable {
     }
 
     private void drawSeeds(Graphics2D g2D) {
-//        for (SeedSlot seedSlot : SeedSlot.values()) {
-//            if (seedSlot != SeedSlot.SHOVEL && seedSlot != SeedSlot.POTATO_MINE_UNREADY && menuSeedSlots.get(seedSlot) != null) {
-//                g2D.drawImage(
-//                        getTexture(ImgName.valueOf(seedSlot.toString() + "_SEEDS")),
-//                        menuSeedSlots.get(seedSlot).x,
-//                        menuSeedSlots.get(seedSlot).y,
-//                        null);
-//            }
-//        }
+        for (GameObjectType type : menuSeedSlots.keySet()) {
+            g2D.drawImage(getTexture(type), menuSeedSlots.get(type).x, menuSeedSlots.get(type).y, null);
+        }
         for (int i = 0; i < chosenSeeds.size(); ++i) {
             ChosenSeed chosenSeed = chosenSeeds.get(i);
-            g2D.drawImage(getTexture(chosenSeed.type), chosenSeed.box.x, chosenSeed.box.y, null);
+            g2D.drawImage(getTexture(chosenSeed.seedType), chosenSeed.box.x, chosenSeed.box.y, null);
         }
     }
 
@@ -210,8 +204,13 @@ public class Render implements Runnable {
             g2D.drawImage(getTexture(GameObjectType.ShovelIcon), 1050, 0, null);
             for (ChosenSeed chosenSeed : chosenSeeds) {
                 Rect box = chosenSeed.box;
-                if (pvzContainers.get(chosenSeed.type).COST == 0)
-                    g2D.drawImage(getTexture(chosenSeed.type), box.x, box.y, null);
+                // TODO: mark for future
+                GameObjectType plantType;
+                if(chosenSeed.seedType != GameObjectType.Shovel) {
+                    plantType = GameObjectType.valueOf(chosenSeed.seedType.toString().substring(5));
+                    if (pvzContainers.get(plantType).reloading == 0)
+                        g2D.drawImage(getTexture(chosenSeed.seedType), box.x, box.y, null);
+                }
             }
             g2D.setColor(Color.WHITE);
             g2D.drawString("" + sunAmount, 20, 85);
@@ -224,15 +223,14 @@ public class Render implements Runnable {
             g2D.drawString("" + brainsAmount, 20, 85);
             for (ChosenSeed chosenSeed : chosenSeeds) {
                 Rect box = chosenSeed.box;
-                if (pvzContainers.get(chosenSeed.type).COST == 0)
-                    g2D.drawImage(getTexture(chosenSeed.type), box.x, box.y, null);
+                g2D.drawImage(getTexture(chosenSeed.seedType), box.x, box.y, null);
             }
         }
     }
 
     private void drawZombies(Graphics2D g2D) {
-        for (int i = 0; i < zombieList.size(); i++) {
-            Zombie zombie = zombieList.get(i);
+        for (int z = 0; z < zombieList.size(); z++) {
+            Zombie zombie = zombieList.get(z);
             PvZContainer container = pvzContainers.get(zombie.type);
             Point frameSizeEat = container.frameSizeEat;
             Point frameSizeWalk = container.frameSizeWalk;
@@ -240,7 +238,7 @@ public class Render implements Runnable {
             if(frameSizeEat != null && zombie.isEating) {
                 image = container.eatAtlas.getSubimage(zombie.frameIndex * frameSizeEat.x, 0, frameSizeEat.x, frameSizeEat.y);
             } else if(frameSizeWalk != null) {
-                image = container.eatAtlas.getSubimage(zombie.frameIndex * frameSizeWalk.x, 0, frameSizeWalk.x, frameSizeWalk.y);
+                image = container.walkAtlas.getSubimage(zombie.frameIndex * frameSizeWalk.x, 0, frameSizeWalk.x, frameSizeWalk.y);
             }
             g2D.drawImage(image, zombie.hitbox.x, zombie.hitbox.y, null);
         }
@@ -261,7 +259,7 @@ public class Render implements Runnable {
 
     private void drawMouse(Graphics2D g2D) {
         if (selectedObject != null) {
-            g2D.drawImage(getTexture(selectedObject), mouseX, mouseY, null);
+            g2D.drawImage(getTexture(selectedObject.objType), mouseX, mouseY, null);
         }
         for (int x = 0; x < 12; x++) {
             for (int y = 0; y < 6; y++) {

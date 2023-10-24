@@ -3,6 +3,8 @@ package com.rxnqst.pvz;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static com.rxnqst.pvz.GameSettings.SEED_RELOAD_MODIFIER;
+
 public class PvZContainer {
     public final BufferedImage image;
     public final BufferedImage eatAtlas;
@@ -16,7 +18,7 @@ public class PvZContainer {
     // Zombie configuration
     public PvZContainer(BufferedImage image, BufferedImage eatAtlas, BufferedImage walkAtlas,
                         Point frameSizeEat, Point frameSizeWalk, int COST) {
-        this.image = null;
+        this.image = image;
         this.plantAnimation = null;
         this.RELOAD_TIME = 0;
         assert eatAtlas != null;
@@ -31,7 +33,8 @@ public class PvZContainer {
     public PvZContainer(BufferedImage image, BufferedImage plantAnimation, int COST, int RELOAD_TIME) {
         this.image = image;
         this.plantAnimation = plantAnimation;
-        this.RELOAD_TIME = RELOAD_TIME;
+        this.RELOAD_TIME = RELOAD_TIME * SEED_RELOAD_MODIFIER;
+        this.reloading = this.RELOAD_TIME;
         this.eatAtlas = null;
         this.walkAtlas = null;
         this.frameSizeEat = null;

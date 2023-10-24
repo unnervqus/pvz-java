@@ -9,12 +9,12 @@ import com.rxnqst.pvz.utils.Rect;
 import java.awt.image.BufferedImage;
 
 public class Grave extends GameObject {
-    public GameObjectType type = GameObjectType._ZGrave;
     public transient BufferedImage image;
     public Grave(int column, int line) {
         super(line, column,  0,0, 10000 );
         this.line = line;
         this.column = column;
+        type = GameObjectType.ZGrave;
         hp = 10000;
         hitbox = new Rect(column * 150 + 20, line * 150 + 90, 0, 0);
         int r = GameEngine.randomizer.nextInt(0,2);

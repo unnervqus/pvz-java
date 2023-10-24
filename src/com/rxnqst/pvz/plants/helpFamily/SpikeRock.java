@@ -7,13 +7,13 @@ import com.rxnqst.pvz.utils.Rect;
 import static com.rxnqst.pvz.GameEngine.pvzContainers;
 
 public class SpikeRock extends Plant {
-    public  GameObjectType type = GameObjectType.SpikeRock;
     public static int RELOAD = pvzContainers.get(GameObjectType.SpikeRock).RELOAD_TIME;
     public int maxZombie;
     public int dmg;
     public SpikeRock(int tileX, int tileY) {
         super(750, tileX, tileY, false);
         hitbox = new Rect(column * 150+15, line * 150+175 , 108, 60);
+        type = GameObjectType.SpikeRock;
         maxZombie = 7;
         dmg = 5;
     }

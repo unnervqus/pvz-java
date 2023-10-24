@@ -1,6 +1,6 @@
 compile:
-	javac com/rxnqst/pvz/*.java com/rxnqst/pvz/gui/*.java com/rxnqst/pvz/plants/*.java com/rxnqst/pvz/zombies/*.java com/rxnqst/pvz/utils/*.java com/rxnqst/pvz/net/*.java com/rxnqst/pvz/dataIO/*.java com/rxnqst/pvz/peas/*.java com/rxnqst/pvz/threads/*.java com/rxnqst/pvz/effects/*.java
-	jar cfe PvZ.jar com.rxnqst.pvz.PvZ com/rxnqst/pvz/*.class com/rxnqst/pvz/plants/attackFamily/*.class com/rxnqst/pvz/plants/helpFamily/*.class com/rxnqst/pvz/plants/defenceFamily/*.class com/rxnqst/pvz/plants/boomFamily/*.class com/rxnqst/pvz/gui/*.class com/rxnqst/pvz/plants/*.class com/rxnqst/pvz/zombies/*.class com/rxnqst/pvz/utils/*.class com/rxnqst/pvz/net/*.class com/rxnqst/pvz/dataIO/*.class com/rxnqst/pvz/peas/*.class com/rxnqst/pvz/threads/*.class com/rxnqst/pvz/effects/*.class
+	javac com/rxnqst/pvz/PvZ.java 
+	jar cfe PvZ.jar com.rxnqst.pvz.PvZ com/rxnqst/pvz/*.class com/rxnqst/pvz/plants/attackFamily/*.class com/rxnqst/pvz/plants/helpFamily/*.class com/rxnqst/pvz/plants/defenceFamily/*.class com/rxnqst/pvz/plants/boomFamily/*.class com/rxnqst/pvz/gui/*.class com/rxnqst/pvz/plants/*.class com/rxnqst/pvz/zombies/*.class com/rxnqst/pvz/utils/*.class com/rxnqst/pvz/net/*.class com/rxnqst/pvz/peas/*.class com/rxnqst/pvz/threads/*.class com/rxnqst/pvz/effects/*.class
 	del /q "com\rxnqst\pvz\*.class"
 	del /q "com\rxnqst\pvz\gui\*.class"
 	del /q "com\rxnqst\pvz\plants\*.class"

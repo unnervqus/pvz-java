@@ -2,3 +2,5 @@
 .iml
 out/
 .class
+src/com/rxnqst/pvz/*.class
+src/com/rxnqst/pvz/net/*.class

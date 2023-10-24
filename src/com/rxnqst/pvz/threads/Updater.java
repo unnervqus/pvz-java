@@ -18,14 +18,12 @@ import com.rxnqst.pvz.utils.Rect;
 import com.rxnqst.pvz.zombies.*;
 
 import java.awt.event.KeyEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
 import static com.rxnqst.pvz.GameEngine.*;
-import static com.rxnqst.pvz.GameObjectSpawner.newPlant;
-import static com.rxnqst.pvz.GameObjectSpawner.newZombie;
+import static com.rxnqst.pvz.GameObjectSpawner.*;
 import static com.rxnqst.pvz.GameObjectType.*;
 import static com.rxnqst.pvz.GameSettings.*;
 import static com.rxnqst.pvz.utils.Utils.checkBoxesOverlap;
@@ -40,39 +38,32 @@ public class Updater implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             checkKeyboardInput();
             while (isGameRunning) {
-                try {
-                    checkKeyboardInput();
-                    if (drawPlantChoose) {
-                        checkSeedsChoice();
-                    } else {
-                        checkMouseClick();
-                        if (isMultiplayerOn) {
-                            if (isServer && server.clientSocket == null) {
-                                continue;
-                            } else if (!isServer && client.socket == null) {
-                                continue;
-                            }
+                checkKeyboardInput();
+                if (drawPlantChoose) {
+                    checkSeedsChoice();
+                } else {
+                    checkMouseClick();
+                    if (isMultiplayerOn) {
+                        if (isServer && server.clientSocket == null) {
+                            continue;
+                        } else if (!isServer && client.socket == null) {
+                            continue;
                         }
-                        checkPlantsCooldown();
-                        if (isServer) {
-                            if (isPlantsGameMode) generateSun();
-                            calculateSunsMove();
-                            calculateBrainsAmount();
-                        }
-                        calculatePeas();
-                        calculatePlants();
-                        calculateZombies();
-                        updateFogPosition();
-                        checkJackboxSound();
                     }
-                    checkKeyboardHoldInput();
-                    clickX = 0;
-                    clickY = 0;
-                    isMouseClicked = false;
-                } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException |
-                         NoSuchMethodException | InstantiationException e) {
-                    e.printStackTrace();
+                    checkPlantsCooldown();
+                    if (isServer) {
+                        if (isPlantsGameMode) generateSun();
+                        calculateSunsMove();
+                        calculateBrainsAmount();
+                    }
+                    calculatePeas();
+                    calculatePlants();
+                    calculateZombies();
+                    updateFogPosition();
+                    checkJackboxSound();
                 }
+                checkKeyboardHoldInput();
+                isMouseClicked = false;
                 try {
                     Thread.sleep(25);
                 } catch (InterruptedException ignored) {
@@ -101,7 +92,7 @@ public class Updater implements Runnable {
             if (isMouseClicked) {
                 if (checkCollision(menuSeedSlots.get(type), clickX, clickY)) {
                     if (chosenSeeds.size() < 11) {
-                        if (chosenSeeds.stream().filter(chosenSeed -> chosenSeed.type == type).toList().size() == 0) {
+                        if (chosenSeeds.stream().filter(chosenSeed -> chosenSeed.seedType == type).toList().size() == 0) {
                             chosenSeeds.add(new ChosenSeed(type, new Rect(93 + 86 * chosenSeeds.size(), 5, 64, 86)));
                         }
                     }
@@ -142,27 +133,26 @@ public class Updater implements Runnable {
             if (keys[KeyEvent.VK_F] && !keysOnHold[KeyEvent.VK_F]) isServer = !isServer;
             if (keys[KeyEvent.VK_D] && !keysOnHold[KeyEvent.VK_D]) isPlantsGameMode = !isPlantsGameMode;
         } else {
-            if (keys[KeyEvent.VK_ESCAPE]) selectedObject = null;
+            if (keys[KeyEvent.VK_ESCAPE]) {
+                selectedObject = null;
+            }
             if (keys[KeyEvent.VK_Z] && !keysOnHold[KeyEvent.VK_Z]) {
-                zombieList.add(new Zomboni(1700, 1));
-                zombieList.add(new BalloonZombie(1700, 2));
-                zombieList.add(new ZombieJackbox(1700, 3));
-                zombieList.add(new ZombieDoor(1700, 4));
+                newZombie(ZZomboni, 2);
             }
             if (isServer) if (keys[KeyEvent.VK_S]) stopGame();
             if (isServer) if (keys[KeyEvent.VK_B]) continueGame();
             if (keys[KeyEvent.VK_H] && !keysOnHold[KeyEvent.VK_H]) drawHP = !drawHP;
-            if (keys[KeyEvent.VK_1]) selectedObject = chosenSeeds.get(0).type;
-            if (keys[KeyEvent.VK_2] && chosenSeeds.size() > 2) selectedObject = chosenSeeds.get(1).type;
-            if (keys[KeyEvent.VK_3] && chosenSeeds.size() > 3) selectedObject = chosenSeeds.get(2).type;
-            if (keys[KeyEvent.VK_4] && chosenSeeds.size() > 4) selectedObject = chosenSeeds.get(3).type;
-            if (keys[KeyEvent.VK_5] && chosenSeeds.size() > 5) selectedObject = chosenSeeds.get(4).type;
-            if (keys[KeyEvent.VK_6] && chosenSeeds.size() > 6) selectedObject = chosenSeeds.get(5).type;
-            if (keys[KeyEvent.VK_7] && chosenSeeds.size() > 7) selectedObject = chosenSeeds.get(6).type;
-            if (keys[KeyEvent.VK_8] && chosenSeeds.size() > 8) selectedObject = chosenSeeds.get(7).type;
-            if (keys[KeyEvent.VK_9] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(8).type;
-            if (keys[KeyEvent.VK_0] && chosenSeeds.size() > 10) selectedObject = chosenSeeds.get(9).type;
-            if (keys[KeyEvent.VK_MINUS] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(10).type;
+            if (keys[KeyEvent.VK_1]) selectedObject = chosenSeeds.get(0);
+            if (keys[KeyEvent.VK_2] && chosenSeeds.size() > 2) selectedObject = chosenSeeds.get(1);
+            if (keys[KeyEvent.VK_3] && chosenSeeds.size() > 3) selectedObject = chosenSeeds.get(2);
+            if (keys[KeyEvent.VK_4] && chosenSeeds.size() > 4) selectedObject = chosenSeeds.get(3);
+            if (keys[KeyEvent.VK_5] && chosenSeeds.size() > 5) selectedObject = chosenSeeds.get(4);
+            if (keys[KeyEvent.VK_6] && chosenSeeds.size() > 6) selectedObject = chosenSeeds.get(5);
+            if (keys[KeyEvent.VK_7] && chosenSeeds.size() > 7) selectedObject = chosenSeeds.get(6);
+            if (keys[KeyEvent.VK_8] && chosenSeeds.size() > 8) selectedObject = chosenSeeds.get(7);
+            if (keys[KeyEvent.VK_9] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(8);
+            if (keys[KeyEvent.VK_0] && chosenSeeds.size() > 10) selectedObject = chosenSeeds.get(9);
+            if (keys[KeyEvent.VK_MINUS] && chosenSeeds.size() > 9) selectedObject = chosenSeeds.get(10);
         }
     }
 
@@ -206,10 +196,11 @@ public class Updater implements Runnable {
         }
     }
 
-    private void checkPlantsCooldown() throws NoSuchFieldException, IllegalAccessException {
+    private void checkPlantsCooldown() {
         for (GameObjectType type : menuSeedSlots.keySet()) {
-            if (pvzContainers.get(type).reloading > 0) {
-                --pvzContainers.get(type).reloading;
+            GameObjectType seedsType = GameObjectType.valueOf(type.toString().substring(5));
+            if (pvzContainers.get(seedsType).reloading > 0) {
+                --pvzContainers.get(seedsType).reloading;
             }
         }
     }
@@ -318,7 +309,7 @@ public class Updater implements Runnable {
                     peaList.remove(pea);
                 }
             }
-            pea.hitbox.x += PEA_SPEED;
+            pea.hitbox.x += PROJECTILE_SPEED;
             if (pea.hitbox.x > 2000) peaList.remove(pea);
         }
     }
@@ -326,14 +317,14 @@ public class Updater implements Runnable {
     private void generateSun() {
         if (SUN_GAME_RELOAD > 0) --SUN_GAME_RELOAD;
         else if (SUN_GAME_RELOAD == 0) {
-            SUN_GAME_RELOAD = SUN_PROD;
+            SUN_GAME_RELOAD = SKY_SUN_PROD_COOLDOWN;
             sunList.add(new Sun(r.nextInt(10, 1800), -400, r.nextInt(60, 1020), 25));
         }
         for (Plant plant : plantList) {
             if (plant.type == Sunflower) {
                 if (((Sunflower) plant).sunReload == 0) {
                     sunList.add(new Sun(plant.hitbox.x, plant.hitbox.y - 10, plant.hitbox.y + 10, 25 + 25 * (plant.level - 1)));
-                    ((Sunflower) plant).sunReload = SUNFLOWER_PROD_TIME;
+                    ((Sunflower) plant).sunReload = SUNFLOWER_PROD_TIME_COOLDOWN;
                 } else {
                     --((Sunflower) plant).sunReload;
                 }
@@ -341,12 +332,12 @@ public class Updater implements Runnable {
         }
     }
 
-    private void checkMouseClick() throws NoSuchFieldException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
-        if (!checkAnyBoxCollision()) {
-            if (selectedObject != null) {
-                if (isMouseClicked) {
+    private void checkMouseClick() {
+        if (isMouseClicked) {
+            if (!checkAnyBoxCollision()) {
+                if (selectedObject != null) {
                     if (isPlantsGameMode) {
-                        if (selectedObject == Shovel) {
+                        if (selectedObject.seedType == Shovel) {
                             checkShovelClick();
                         } else checkPlantClick();
                     } else {
@@ -371,7 +362,7 @@ public class Updater implements Runnable {
     }
 
     private void checkMiscClick() {
-        if (selectedObject == _ZGrave) {
+        if (selectedObject.objType == ZGrave) {
             for (int x = 0; x < 12; x++) {
                 for (int y = 0; y < 6; y++) {
                     if (checkCollision(tiles[x][y], clickX, clickY)) {
@@ -393,41 +384,47 @@ public class Updater implements Runnable {
                                 return;
                             }
                         }
-                        Grave grave = new Grave(x, y);
-                        if (isMultiplayerOn) {
-                            if (isServer) {
-                                serverGraveQueue.add(grave);
-                                //do nothing
-                            } else {
-                                clientGraveQueue.add(grave);
+                        if (brainsAmount >= pvzContainers.get(selectedObject.objType).COST) {
+                            Grave grave = new Grave(x, y);
+                            if (isMultiplayerOn) {
+                                if (isServer) {
+                                    serverGraveQueue.add(grave);
+                                    //do nothing
+                                } else {
+                                    clientGraveQueue.add(grave);
+                                }
                             }
+                            graveList.add(grave);
+                            brainsAmount -= 500;
+                            selectedObject = null;
+                            return;
                         }
-                        graveList.add(grave);
-                        brainsAmount -= 500;
-                        selectedObject = null;
-                        return;
                     }
                 }
             }
-        } else if (selectedObject == ZFlag) {
-            for (int g = 0; g < graveList.size(); g++) {
-                Grave grave = graveList.get(g);
-                int r = randomizer.nextInt(0, 5);
-                Zombie zombie = null;
-                switch (r) {
-                    //TODO: WTF, WHY DO I SPAWN THEY IN POSX AND LINE
-                    case 0 -> zombie = new BasicZombie(grave.column * 150, grave.line);
-                    case 1 -> zombie = new ZombieConehead(grave.column * 150, grave.line);
-                    case 2 -> zombie = new ZombieBuckethead(grave.column * 150, grave.line);
-                    case 3 -> zombie = new ZombieImp(grave.column * 150, grave.line);
-                    case 4 -> zombie = new ZombieDoor(grave.column * 150, grave.line);
-                }
-                if (isMultiplayerOn) {
-                    if (isServer) {
-                        zombieList.add(zombie);
-                        serverZombieQueue.add(zombie);
+        } else if (selectedObject.objType == ZFlag) {
+            if (brainsAmount >= pvzContainers.get(selectedObject.objType).COST) {
+                brainsAmount -= pvzContainers.get(selectedObject.objType).COST;
+                for (int g = 0; g < graveList.size(); g++) {
+                    Grave grave = graveList.get(g);
+                    int r = randomizer.nextInt(0, 5);
+                    Zombie zombie = null;
+                    switch (r) {
+                        case 0 -> zombie = new BasicZombie(grave.column * 150, grave.line);
+                        case 1 -> zombie = new ZombieConehead(grave.column * 150, grave.line);
+                        case 2 -> zombie = new ZombieBuckethead(grave.column * 150, grave.line);
+                        case 3 -> zombie = new ZombieDoor(grave.column * 150, grave.line);
+                        case 4 -> zombie = new ZombieImp(grave.column * 150, grave.line);
+                    }
+                    if (isMultiplayerOn) {
+                        if (isServer) {
+                            zombieList.add(zombie);
+                            serverZombieQueue.add(zombie);
+                        } else {
+                            clientZombieQueue.add(zombie);
+                        }
                     } else {
-                        clientZombieQueue.add(zombie);
+                        zombieList.add(zombie);
                     }
                 }
             }
@@ -436,21 +433,11 @@ public class Updater implements Runnable {
     }
 
     private void checkZombieClick() {
-        if (selectedObject != _ZGrave && selectedObject != ZFlag) {
+        if (selectedObject.objType != ZGrave && selectedObject.objType != ZFlag) {
             for (int y = 0; y < 6; y++) {
                 if ((clickY - 100) / 150 == y) {
-                    if (pvzContainers.get(selectedObject).COST <= brainsAmount) {
-                        Zombie zombie = newZombie(selectedObject, y);
-                        if (isServer) {
-                            zombieList.add(zombie);
-                            serverZombieQueue.add(zombie);
-                        } else {
-                            clientZombieQueue.add(zombie);
-                        }
-                        brainsAmount -= pvzContainers.get(selectedObject).COST;
-                        selectedObject = null;
-                        break;
-                    }
+                    newZombie(selectedObject.objType, 0, y);
+                    break;
                 }
             }
         }
@@ -477,18 +464,16 @@ public class Updater implements Runnable {
                     }
                     //TODO: Is there better way to implement this?
                     if (selectedObject != null) {
-                        if (pvzContainers.get(selectedObject).reloading == 0 &&
-                                sunAmount >= pvzContainers.get(selectedObject).COST) {
+                        if (pvzContainers.get(selectedObject.objType).reloading == 0 &&
+                                sunAmount >= pvzContainers.get(selectedObject.objType).COST) {
                             if (target != null) {
-                                if (selectedObject == target.type) {
+                                if (selectedObject.objType == target.type) {
                                     upgradePlant(target);
                                     Sound.playPlantPlantedSound();
                                     return;
-                                } else if (selectedObject == Pumpkin) {
+                                } else if (selectedObject.objType == Pumpkin) {
                                     if (targetPumpkin == null) {
-                                        Plant plant = newPlant(selectedObject, x, y);
-                                        plantList.add(plant);
-                                        serverPlantQueue.add(plant);
+                                        newPlant(selectedObject.objType, x, y);
                                     } else {
                                         upgradePlant(targetPumpkin);
                                     }
@@ -496,18 +481,14 @@ public class Updater implements Runnable {
                                     return;
                                 }
                             } else {
-                                if (selectedObject == Pumpkin) {
+                                if (selectedObject.objType == Pumpkin) {
                                     if (targetPumpkin == null) {
-                                        Plant plant = newPlant(selectedObject, x, y);
-                                        plantList.add(plant);
-                                        serverPlantQueue.add(plant);
+                                        newPlant(selectedObject.objType, x, y);
                                     } else {
                                         upgradePlant(targetPumpkin);
                                     }
                                 } else {
-                                    Plant plant = newPlant(selectedObject, x, y);
-                                    plantList.add(plant);
-                                    serverPlantQueue.add(plant);
+                                    newPlant(selectedObject.objType, x, y);
                                 }
                                 Sound.playPlantPlantedSound();
                                 return;
@@ -519,11 +500,12 @@ public class Updater implements Runnable {
         }
     }
 
-    private void upgradePlant(Plant target)  {
+    private void upgradePlant(Plant target) {
         if (target.level < 10) {
             target.levelUP();
-            pvzContainers.get(selectedObject).reloading = pvzContainers.get(selectedObject).RELOAD_TIME * SEED_RELOAD_MODIFIER;
-            GameEngine.sunAmount -= pvzContainers.get(selectedObject).COST;
+            pvzContainers.get(selectedObject.objType).reloading =
+                    pvzContainers.get(selectedObject.objType).RELOAD_TIME * SEED_RELOAD_MODIFIER;
+            GameEngine.sunAmount -= pvzContainers.get(selectedObject.objType).COST;
             GameEngine.selectedObject = null;
         }
     }
@@ -532,17 +514,18 @@ public class Updater implements Runnable {
         for (ChosenSeed chosenSeed : chosenSeeds) {
             if (checkCollision(chosenSeed.box, clickX, clickY)) {
                 if (isPlantsGameMode) {
-                    if (chosenSeed.type == Shovel) {
+                    if (chosenSeed.seedType == Shovel) {
                         Sound.playShovelSound();
-                        selectedObject = Shovel;
+                        selectedObject = chosenSeeds.get(chosenSeeds.size() - 1);
                     } else {
-                        if (pvzContainers.get(chosenSeed.type).reloading == 0) {
-                            selectedObject = chosenSeed.type;
+                        //TODO: mark for future
+                        if (pvzContainers.get(chosenSeed.objType).reloading == 0) {
+                            selectedObject = chosenSeed;
                             return true;
                         }
                     }
-                } else if (chosenSeed.type != Shovel) {
-                    selectedObject = chosenSeed.type;
+                } else if (chosenSeed.seedType != Shovel) {
+                    selectedObject = chosenSeed;
                     return true;
                 }
             }

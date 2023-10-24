@@ -28,7 +28,7 @@ public enum GameObjectType {
     SeedsPotatoMine,
     SeedsSnowPeashooter,
     SeedsPuffshroom,
-    SeedsCherryBoom,
+    SeedsCherryBomb,
     SeedsCactus,
     SeedsCabbagePult,
     SeedsTriplePeashooter,
@@ -70,7 +70,7 @@ public enum GameObjectType {
     ZSeedsZomboni,
     ZSeedsJackbox,
     // * Other objects
-    _ZGrave,
+    ZGrave,
     ZGrave1,
     ZGrave2,
     ZSeedsGrave,
